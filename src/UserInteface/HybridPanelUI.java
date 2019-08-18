@@ -4836,6 +4836,17 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void reprintOutMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintOutMousePressed
         ParkersAPI pa = new ParkersAPI();
         pa.reprintOut(firstRun, reprintPlate.getText().toUpperCase(), jList1.getSelectedValue());
+        String[] blank = {""};
+        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            public int getSize() {
+                return blank.length;
+            }
+
+            public String getElementAt(int i) {
+                return blank[i];
+            }
+        });
+        ReprintPanel.setVisible(false);
     }//GEN-LAST:event_reprintOutMousePressed
 
     private void LoginButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LoginButton1MouseClicked
