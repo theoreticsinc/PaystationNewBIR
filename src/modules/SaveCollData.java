@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import misc.DataBaseHandler;
 import misc.LogUtility;
 import misc.RawFileHandler;
+import misc.XMLreader;
 
 /**
  *
@@ -25,6 +26,16 @@ public class SaveCollData {
     static Logger log = LogManager.getLogger(SaveCollData.class.getName());
 
     private String loginID;
+    private boolean roundoff2;
+    
+    public SaveCollData() {
+        XMLreader xr = new XMLreader();
+        try {
+            roundoff2 = xr.getElementValue("C://JTerminals/initH.xml", "roundoff2").compareToIgnoreCase("true") == 0;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+    }
         
     public void UpdatePtypecount(String Ftype) {
         try {
@@ -106,7 +117,13 @@ public class SaveCollData {
      public void UpdateImptAmountDB(String fieldName, String logcode, Double data) {
         try {
             double oldAmount = dbh.getImptAmount(fieldName, logcode);
+            if (roundoff2) {
+                oldAmount = Math.round(oldAmount * 100.0) / 100.0;
+            }
             double newAmount = oldAmount + data;
+            if (roundoff2) {
+                newAmount = Math.round(newAmount * 100.0) / 100.0;
+            }
             dbh.setImptAmount(fieldName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -117,7 +134,13 @@ public class SaveCollData {
         try {
             String ptypeName = dbh.getPtypeName(Ftype);
             double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
+            if (roundoff2) {
+                oldAmount = Math.round(oldAmount * 100.0) / 100.0;
+            }
             double newAmount = oldAmount + data;
+            if (roundoff2) {
+                newAmount = Math.round(newAmount * 100.0) / 100.0;
+            }
             dbh.setPtypeAmount(ptypeName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -128,7 +151,13 @@ public class SaveCollData {
         try {
             String ptypeName = Ftype;
             double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
+            if (roundoff2) {
+                oldAmount = Math.round(oldAmount * 100.0) / 100.0;
+            }
             double newAmount = oldAmount + data;
+            if (roundoff2) {
+                newAmount = Math.round(newAmount * 100.0) / 100.0;
+            }
             dbh.setPtypeAmount(ptypeName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -139,7 +168,13 @@ public class SaveCollData {
         try {
             String ptypeName = dbh.getPtypeName(Ftype);
             double oldAmount = dbh.getPtypeAmount(ptypeName, logcode);
+            if (roundoff2) {
+                oldAmount = Math.round(oldAmount * 100.0) / 100.0;
+            }
             double newAmount = oldAmount - data;
+            if (roundoff2) {
+                newAmount = Math.round(newAmount * 100.0) / 100.0;
+            }
             dbh.setPtypeAmount(ptypeName, logcode, newAmount);
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -252,8 +287,14 @@ public class SaveCollData {
             String curr = rfh.readFline("C://JTerminals/de4Dd87d/CfgJ9rl/", "scrand.jrt", 1);
 
             double newcount = 0;
-            double oldcount = Double.parseDouble(curr);
+            double oldcount = Double.parseDouble(curr);            
+            if (roundoff2) {
+                oldcount = Math.round(oldcount * 100.0) / 100.0;
+            }  
             newcount = oldcount + AmountRCPT;
+            if (roundoff2) {
+                newcount = Math.round(newcount * 100.0) / 100.0;
+            } 
             newcurr = String.valueOf(newcount);
             rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "scrand.jrt", newcurr);
         } else {
@@ -299,7 +340,13 @@ public class SaveCollData {
 
             double newcount = 0;
             double oldcount = Double.parseDouble(curr);
+            if (roundoff2) {
+                oldcount = Math.round(oldcount * 100.0) / 100.0;
+            }  
             newcount = oldcount + AmountRCPT;
+            if (roundoff2) {
+                newcount = Math.round(newcount * 100.0) / 100.0;
+            } 
             newcurr = String.valueOf(newcount);
             rfh.putfile("C://JTerminals/FnF/iXyZp12R/", "XOR" + ".jrt", newcurr);
         } else {
@@ -433,11 +480,13 @@ public class SaveCollData {
     }
     
     
-    public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String vatSale, String vat12Sale, String vatExempt, String discounts) {
+    public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExempt, String discounts, String voidsCollected) {
         try {
             String endingReceiptNos = getReceiptNos();
             String endingGrandTotal = getGRANDTOTAL();
             //String transaction = dbh.getTransactionNos();
+            dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+        
         } catch (IOException ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());

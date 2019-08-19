@@ -477,9 +477,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SlotsComputer sc = new SlotsComputer(slotscompute);
         ThrSlotsClock = new Thread(sc);
         ThrSlotsClock.start();
-        ShowExitCamera sec = new ShowExitCamera();
-        ThrShowExitCamera = new Thread(sec);
-        ThrShowExitCamera.start();
+        //ShowExitCamera sec = new ShowExitCamera();
+        //ThrShowExitCamera = new Thread(sec);
+        //ThrShowExitCamera.start();
         //OnlineQuickUpdater qc = new OnlineQuickUpdater();
         //ThrQuickUpdaterClock = new Thread(qc);
         //ThrQuickUpdaterClock.start();
@@ -590,7 +590,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardPanel = new javax.swing.JPanel();
         MasterCardLbl = new javax.swing.JLabel();
         MasterCardInput2 = new javax.swing.JLabel();
-        reprintButton = new javax.swing.JButton();
         BGPanel = new javax.swing.JPanel();
         NorthPanel = new javax.swing.JPanel();
         ProductName = new javax.swing.JLabel();
@@ -1567,14 +1566,6 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         MasterCardInput2.setForeground(new java.awt.Color(51, 25, 25));
         MasterCardInput2.setOpaque(true);
         MasterCardPanel.add(MasterCardInput2);
-
-        reprintButton.setText("Reprint X Read");
-        reprintButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                reprintButtonMousePressed(evt);
-            }
-        });
-        MasterCardPanel.add(reprintButton);
 
         getContentPane().add(MasterCardPanel);
         MasterCardPanel.setBounds(480, 350, 310, 60);
@@ -2573,8 +2564,8 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
         jScrollPane1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        jList1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jScrollPane1.setViewportView(jList1);
 
         ReprintPanel.add(jScrollPane1);
@@ -5172,12 +5163,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         manualEntryTime.setTimeToNow();
     }//GEN-LAST:event_XFunc12MouseClicked
 
-    private void reprintButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reprintButtonMousePressed
-        MasterCardPanel.setVisible(false);
-        MainFuncPad.setVisible(false);
-        SecretFuncPad.setVisible(true);
-    }//GEN-LAST:event_reprintButtonMousePressed
-
     private void OverrideSwitch_set2Exit(boolean setExit) {
 //        this.clearLeftMIDMsgPanel();
 //        this.clearRightPanel(); 
@@ -5739,6 +5724,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 //lm.printLogoutReceiptFromDB(EX_SentinelID, false);
                 lm.printHEADER(EX_SentinelID);
                 lm.epsonPrintLogoutReceiptFromDB(EX_SentinelID, false);
+                
                 //---------------------------
                 lm.saveLogintoFile(logStamp, "", "", "");
                 SysMessage1.setText("LOGOUT Successful");
@@ -5757,16 +5743,19 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 CashierName = "";
                 //String logID, String Exitpoint, String lastTransaction, String logcode                
                 String lastTransaction = dbh.getLastTransaction(EX_SentinelID);
+                Float grossCollected = dbh.getImptAmount("grossAmount", loginID);
                 Float totalCollected = dbh.getImptAmount("totalAmount", loginID);
                 Float discountCollected = dbh.getImptAmount("discountAmount", loginID);
                 Float vatsaleAmount = dbh.getImptAmount("vatsaleAmount", loginID);
                 Float vat12Amount = dbh.getImptAmount("vat12Amount", loginID);
                 Float vatExemptAmount = dbh.getImptAmount("vatExemptAmount", loginID);                
+                //Float voidsCollected = dbh.getImptAmount("voidsAmount", loginID);
+                Float voidsCollected = 0f;
                 
                 //Double Sale12Vat = (double) totalCollected * 0.12;
                 //Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
                 //Double vatSale = totalCollected - Sale12Vat;
-                scd.updateZRead(loginID, EX_SentinelID, lastTransaction, compcode, String.valueOf(totalCollected), String.valueOf(vatsaleAmount), String.valueOf(vat12Amount), String.valueOf(vatExemptAmount), String.valueOf(discountCollected));
+                scd.updateZRead(loginID, EX_SentinelID, lastTransaction, compcode, String.valueOf(totalCollected), String.valueOf(grossCollected), String.valueOf(vatsaleAmount), String.valueOf(vat12Amount), String.valueOf(vatExemptAmount), String.valueOf(discountCollected), String.valueOf(voidsCollected));
                 scd.ResetCarServed();
                 scd.ResetExitCarServed();
                 scd.ResetEntryTicketsServed();
@@ -7370,7 +7359,6 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JButton refundBtn;
     private javax.swing.JButton refundOut;
     private javax.swing.JButton reprintBtn;
-    private javax.swing.JButton reprintButton;
     private javax.swing.JLabel reprintLbl1;
     private javax.swing.JLabel reprintLbl2;
     private javax.swing.JButton reprintOut;

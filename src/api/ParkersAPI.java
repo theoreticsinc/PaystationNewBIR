@@ -1074,12 +1074,32 @@ public class ParkersAPI {
                 eh.printline("---------------------------------------");
                 eh.printline("       ***** CUSTOMER INFO *****");
             if (settlement.compareToIgnoreCase("enabled") == 0) {
-                eh.printline("Customer Name:______________________");
-                eh.printline("Addr:_______________________________");
-                eh.printline("TIN :_______________________________");
-                eh.printline("Business Style :____________________");
+                if (settlementName.compareToIgnoreCase("") == 0) {
+                    eh.printline("Customer Name:______________________");
+                } else {
+                    eh.printline("Customer Name:   " + settlementName);
+                }                
+                if (settlementAddr.compareToIgnoreCase("") == 0) {
+                    eh.printline("Addr:_______________________________");
+                } else {
+                    eh.printline("Addr:   " + settlementAddr);
+                }
+                if (settlementTIN.compareToIgnoreCase("") == 0) {
+                    eh.printline("TIN :_______________________________");
+                } else {
+                    eh.printline("TIN :   " + settlementTIN);
+                }
+                if (settlementBusStyle.compareToIgnoreCase("") == 0) {
+                    eh.printline("Business Style :____________________");
+                } else {
+                    eh.printline("Business Style :   " + settlementBusStyle);
+                }          
                 if (isDiscounted) {
-                eh.printline("SC/PWD/OSCA ID No.:  " + settlementRef);
+                    eh.printline("SC/PWD/OSCA ID No.:  " + settlementRef);
+                    eh.printline("NAME      :____________________\n");
+                    eh.printline("SIGNATURE :____________________");
+                } else if (settlementRef.trim().compareToIgnoreCase("") != 0) {
+                    eh.printline("" + settlementRef);
                 }
                 eh.startPrinter();
             }

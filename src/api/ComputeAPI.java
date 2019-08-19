@@ -678,6 +678,9 @@ public class ComputeAPI {
                 SP.eraseEXTCRDFromDB(CardCheck);
             }
             try {
+                if (roundoff2) {
+                    AmountDue = Math.round(AmountDue * 100.0) / 100.0;
+                }
                 if (updateAllTransFiles() == false)//Update Parker Type Data Column
                 {
                 }
