@@ -179,11 +179,11 @@ public class ParkersAPI {
         return data;
     }
 
-    public String[] retrieveReceipt(String plate2check) {
+    public String[] retrieveReceipt(String ReceiptNumber) {
         String data[] = null;
         try {
             DataBaseHandler dbh = new DataBaseHandler();
-            data = dbh.findReceiptsByRNos(plate2check);
+            data = dbh.findReceiptsByRNos(ReceiptNumber);
             //dateTimeIN = dbh.getTimeINStamp();
 
         } catch (Exception ex) {
@@ -988,35 +988,17 @@ public class ParkersAPI {
             eh.openPrinter();
             eh.initializePrinter();
             //eh.printHEADER(SentinenlID);
-            //eh.uline(false);
+            eh.uline(false);
             XMLreader xr = new XMLreader();
-            //will overwrite
-            /*
-            String TINno = xr.getElementValue("C://JTerminals/initH.xml", "receiptno");
-            String serialno = xr.getElementValue("C://JTerminals/initH.xml", "serialno");
-            String headerline1PrintEnabled = xr.getAttributeValue("C://JTerminals/initH.xml", "headerline1", "print");
-            String headerline2PrintEnabled = xr.getAttributeValue("C://JTerminals/initH.xml", "headerline2", "print");
-            String headerline3PrintEnabled = xr.getAttributeValue("C://JTerminals/initH.xml", "headerline3", "print");
-            String headerline4PrintEnabled = xr.getAttributeValue("C://JTerminals/initH.xml", "headerline4", "print");
-            String headerline1 = xr.getElementValue("C:/JTerminals/initH.xml", "headerline1");
-            String headerline2 = xr.getElementValue("C:/JTerminals/initH.xml", "headerline2");
-            String headerline3 = xr.getElementValue("C:/JTerminals/initH.xml", "headerline3");
-            String headerline4 = xr.getElementValue("C:/JTerminals/initH.xml", "headerline4");
-            String MINNumber = xr.getElementValue("C://JTerminals/min.xml", "machineIDno");
-            String PermitNumber = xr.getElementValue("C://JTerminals/min.xml", "permitno");
-            String HeaderEnabled = xr.getElementValue("C://JTerminals/initH.xml", "header");
-            String BIRHeaderEnabled = xr.getElementValue("C://JTerminals/initH.xml", "BIRheader");            
-            String FooterEnabled = xr.getElementValue("C://JTerminals/initH.xml", "footer");
-            String BIRFooterEnabled = xr.getElementValue("C://JTerminals/initH.xml", "BIRfooter");
-             */
+            //will overwrite           
             String feederlines = xr.getElementValue("C://JTerminals/initH.xml", "feederlines");
             String nonvat = xr.getElementValue("C://JTerminals/initH.xml", "nonvat");
             String settlement = xr.getElementValue("C://JTerminals/initH.xml", "settlement");
             //String official = xr.getElementValue("C://JTerminals/initH.xml", "official");
             String message1 = xr.getElementValue("C://JTerminals/initH.xml", "message1");
             String message2 = xr.getElementValue("C://JTerminals/initH.xml", "message2");
-
-//            eh.Justify((byte) 1);
+            
+            eh.Justify((byte) 1);
             //StringBuilder str = new StringBuilder();
             if (black) {
                 eh.setBlack();
@@ -1025,149 +1007,102 @@ public class ParkersAPI {
                 eh.setRed();
                 black = true;
             }
-            if (isReprint) {
-                eh.printline("          --- REPRINT ---");
+            if(isReprint) {
+                eh.printline("            --- REPRINT ---");
             }
-
+            
             //SAVES ON POS JOURNALS
             if (firstRun) {
                 eh.printHEADER(SentinenlID);
             } else {
                 eh.printHEADER(SentinenlID);
             }
-
-            //eh.printline("            OFFICIAL RECEIPT");
-
+            
+            eh.printline("            OFFICIAL RECEIPT");
+            
             eh.printline(duplicateReceiptHeader);
-
-            eh.printline("Official-Receipt # " + RNos);
-
+            
+            eh.printline("Receipt Num.:" + RNos);
+                        
             eh.startPrinter();
             eh.Justify((byte) 0);
             eh.feedpaperup((byte) 1);
-            eh.printline("CardCode      : " + Cardno);
-            eh.printline("Plate#        : " + Plateno);
-            //eh.printline("Ent ID.:" + Entrypoint);
-            //eh.printline("Cashier ID:" + CashierID);
-            //eh.printline("Cashier Name:" + CashierName);
-//            eh.printline("Location     :" + SentinenlID);
-            
+            eh.printline("Ent ID.:" + Entrypoint);
+            eh.printline("Cashier ID:" + CashierID);
+            eh.printline("Cashier Name:" + CashierName);
+            eh.printline("Location:" + SentinenlID);
+            eh.printline("Plate Number:" + Plateno);            
 //String SentinenlID, String Entrypoint, String Plateno, String ParkerType, String TimeIN, String TimeOUT, 
 //long HoursParked, long MinutesParked, float AmountDue, String RNos, String CashierName, boolean OvernightOverride) {
-            //String ptype = checkPTypeFromDB(ParkerType);
-            eh.printline("Vehicle       : " + ParkerType);
-            eh.printline("Time-in       : " + TimeIN);
-            eh.printline("Time-Out      : " + TimeOUT);
-            eh.printline("Time          : " + HoursParked + " Hrs " + MinutesParked + " Mins");
+            String ptype = checkPTypeFromDB(ParkerType);
+            eh.printline("Parker Type: " + ptype);
+            eh.printline("TIME IN:" + TimeIN);
+            eh.printline("TIME OUT:" + TimeOUT);
+            eh.printline("Duration: " + HoursParked + " Hours " + MinutesParked + " Mins");
+            
             eh.printline("---------------------------------------");
-            eh.printline("COMPUTATION");
-
+            eh.printline("    COMPUTATION");
             if (nonvat.compareToIgnoreCase("enabled") == 0) {
                 eh.printline("Amount Paid:  " + displayAmount2Decimals(AmountDue));
             } else {
-                /*if (isDiscounted) {
-                    //Selling Price: 1000
-                    //Vat 12%
-                    //Formula: VAT Exempt Sales = 1000 / 1.12 = 892.86
-                    ///////
-                    //Senior Citizen Discount = VAT Exempt Sales * 0.20
-                    // 892.86 * 0.20    = 178.57
-                    //Amount to be Paid = 892 - 178.57 = 714.29
-                    
-                     // VAT Exempt = 30 / 1.12 = 26.7857 Senior Citizen Discount
-                     // = 26.7857 * 0.20 = 5.3571
-                     
-                    float grossB4Discount = AmountDue / ((100 - discountPercentage) / 100);
+                if (isDiscounted) {
+                    double grossB4Discount = AmountDue / ((100 - discountPercentage) / 100);
                     if (AmountDue <= 0) {
                         grossB4Discount = 0;
                     }
-                    eh.printline("Gross Sales                :  P" + getAmountDue(grossB4Discount));
-                    float lessDiscount = grossB4Discount - AmountDue;
+                    eh.printline("Gross Sales                :  P" + displayAmount2Decimals(AmountGross));
+                    double lessDiscount = grossB4Discount - AmountDue;
                     if (AmountDue <= 0) {
                         lessDiscount = 0;
                     }
-                    eh.printline("Less " + ptype + " DSC " + discountPercentage + "% : -P" + getAmountDue(lessDiscount));
+                    eh.printline("Less "+ptype+ " DSC " + discountPercentage+"% : -P" + displayAmount2Decimals(Float.parseFloat(discountFloat)));
                 } else {
-                    
-                }*/
-                double change = 0f;
-                if (tenderFloat <= AmountDue) {
-                    change = 0f;
-                } else {
-                    change = AmountDue - tenderFloat;
-                }
-                    eh.printline("Total Payment   : P " + displayAmount2Decimals(AmountGross));
-                    eh.printline("Amount Tendered : P " + displayAmount2Decimals(tenderFloat));
-                    eh.printline("Change          : P " + changeDue);
-                    eh.printline("VAT-SALE        : P " + displayAmount2Decimals(vatsale));
-                    eh.printline("VAT-12%         : P " + displayAmount2Decimals(vat12));
-                    eh.printline("VAT-EXEMP       : P " + displayAmount2Decimals(vatexempt));
-                    eh.printline("Discount        : P " + displayAmount2Decimals(Float.parseFloat(discountFloat)));
-                    eh.printline("Amount Due      : P " + displayAmount2Decimals(AmountDue));
-                    
-//                eh.printline("Zero-Rated Sales           :  P0.00");
+                    eh.printline("Gross Sales                :  P" + displayAmount2Decimals(AmountGross));
+                }                
+                eh.printline("VATable Sales              :  P" + displayAmount2Decimals(vatsale));
+                eh.printline("VAT Amount (12%)           :  P" + displayAmount2Decimals(vat12));
+                eh.printline("VAT Exempt Sales           :  P" + displayAmount2Decimals(vatexempt));
+                eh.printline("Zero-Rated Sales           :  P0.00");
+                //eh.printline("Discount                   :  P" + displayAmount2Decimals(Float.parseFloat(discountFloat)));                
             }
             //eh.selectEMstyle(true);
-            //eh.printline("TOTAL AMOUNT               :  P" + getAmountDue(AmountDue));
+                eh.printline("TOTAL AMOUNT               :  P" + displayAmount2Decimals(AmountDue));
             //eh.startPrinter();
             //eh.selectEMstyle(false);
             //eh.startPrinter();
             //eh.Justify((byte) 0);
-            if (settlement.compareToIgnoreCase("enabled") == 0) {
                 eh.printline("---------------------------------------");
-                eh.printline("***** CUSTOMER INFO *****");
-                if (null == settlementName || settlementName.compareToIgnoreCase("") == 0)
-                    eh.printline("Customer Name : _____________________");
-                else
-                    eh.printline("Customer Name :    " + settlementName);
-                if (null == settlementAddr || settlementAddr.compareToIgnoreCase("") == 0) {
-                    eh.printline("Address       : _____________________");
-                    eh.printline("____________________________________");
-                }
-                else
-                    eh.printline("Addr:     " + settlementAddr);
-                if (null == settlementTIN || settlementTIN.compareToIgnoreCase("") == 0)
-                    eh.printline("TIN-#         : _____________________");
-                else
-                    eh.printline("TIN-# : " + settlementTIN);
-                if (null == settlementBusStyle || settlementBusStyle.compareToIgnoreCase("") == 0)
-                    eh.printline("Business Type : ____________________");
-                else
-                    eh.printline("Business Type :    " + settlementBusStyle);
-                /*
+                eh.printline("       ***** CUSTOMER INFO *****");
+            if (settlement.compareToIgnoreCase("enabled") == 0) {
+                eh.printline("Customer Name:______________________");
+                eh.printline("Addr:_______________________________");
+                eh.printline("TIN :_______________________________");
+                eh.printline("Business Style :____________________");
                 if (isDiscounted) {
-                    eh.printline("SC/PWD/OSCA ID No.:  " + settlementRef);
-                    eh.printline("NAME      :____________________\n");
-                    eh.printline("SIGNATURE :____________________");
-                } else if (settlementRef.trim().compareToIgnoreCase("") != 0) {
-                    eh.printline("Settlement Ref :  " + settlementRef);
+                eh.printline("SC/PWD/OSCA ID No.:  " + settlementRef);
                 }
-                */
                 eh.startPrinter();
             }
             eh.Justify((byte) 1);
             eh.selectEMstyle(true);
-            //eh.printline(message1);
-            //eh.printline(message2);
+            eh.printline(message1);
+            eh.printline(message2);
             //eh.startPrinter();
             //eh.selectEMstyle(false);
             //eh.Justify((byte) 1);
-            eh.printFOOTER(SentinenlID, true);
-            eh.printline("THANK YOU FOR PARKING");
-            eh.printline("DRIVE SAFELY !!!");
-            eh.printline("CASHIER : " + CashierName);
-            
             eh.startPrinter();
-
-    
+            
+            eh.printFOOTER(SentinenlID, true);
+            
+            eh.selectEMstyle(true);
+            
             // IF NOT AUTOCUTTER 
             // Instead of feedpaperup use PrintHeader to feed up Then FULLCUT
             eh.feedpaperup((byte) Short.parseShort(feederlines));
             //eh.printHEADER(SentinenlID);
-            if (printerCutter) {
-                eh.fullcut();
-            }
-
+            
+            eh.fullcut();
+            
             eh.closeReceiptFile(SentinenlID);
             eh.closePrinter();
         } catch (Exception ex) {
@@ -1253,7 +1188,8 @@ public class ParkersAPI {
                 eh.printline("VATable Sales              :  P" + getVatSales(AmountDue));
                 eh.printline("VAT Amount (12%)           :  P" + getVat(AmountDue));
                 eh.printline("VAT Exempt Sales           :  P0.00");
-//                eh.printline("Zero-Rated Sales           :  P0.00");
+                eh.printline("Zero-Rated Sales           :  P0.00");
+                    
             }
             eh.printline("TOTAL AMOUNT               :  P" + displayAmount2Decimals(AmountDue));
             if (settlement.compareToIgnoreCase("enabled") == 0) {
@@ -1303,29 +1239,35 @@ public class ParkersAPI {
                 printUSBReceipt(
                         firstRun,
                         true,
-                        rs.getString("PC"),
-                        rs.getString("PC"),
-                        rs.getString("Plate"),
-                        rs.getString("Cardcode"),
-                        rs.getString("TYPE"),
-                        rs.getString("Timein"),
-                        rs.getString("TimeOut"),
-                        0L,
-                        0L,
-                        rs.getFloat("Cash"),
-                        rs.getFloat("Total"),
-                        0,
-                        0,
-                        0,
-                        rs.getString("TRno"),
-                        rs.getString("Operator"),
-                        rs.getString("Operator"),
+                        rs.getString("ExitID"),
+                        rs.getString("EntranceID"),
+                        rs.getString("PlateNumber"),
+                        "",
+                        rs.getString("ParkerType"),
+                        rs.getString("DateTimeIN"),
+                        rs.getString("DateTimeOUT"),
+                        rs.getLong("HoursParked"),
+                        rs.getLong("MinutesParked"),
+                        rs.getFloat("Amount"),
+                        rs.getFloat("GrossAmount"),
+                        rs.getFloat("vat12"),                        
+                        rs.getFloat("vatsale"),    
+                        rs.getFloat("vatexempt"),    
+                        rs.getString("ReceiptNumber"),
+                        rs.getString("CashierName"),
+                        rs.getString("username"),
                         "",
                         "",
                         "",
                         "",
                         "",
-                        "           ###  REPRINT  ###", false, 0f, 0f, "0.00", "0.00", true);
+                        "           ###  REPRINT  ###", 
+                        false, 
+                        0f, 
+                        rs.getFloat("tendered"), 
+                        rs.getString("changeDue"), 
+                        rs.getString("discount"), 
+                        true);
             }
 
             dbh.manualClose();

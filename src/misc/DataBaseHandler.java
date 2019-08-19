@@ -1891,16 +1891,17 @@ public class DataBaseHandler extends Thread {
         }
     }
     
-    public String[] findReceiptsByRNos(String plate2check) {
+    public String[] findReceiptsByRNos(String receipt2check) {
         String data[] = null;
         try {
             connection = getConnection(true);
             String SQL = "";
-            if (plate2check.compareToIgnoreCase("*") == 0) {
-                //SQL = "SELECT * FROM carpark.exit_trans ORDER BY DateTimeOUT DESC";
-                SQL = "SELECT * FROM unidb.incomereport WHERE TRno LIKE '%" + plate2check + "' ORDER BY TimeOut DESC";
+            if (receipt2check.compareToIgnoreCase("*") == 0) {
+                SQL = "SELECT * FROM carpark.exit_trans ORDER BY DateTimeOUT DESC";
+                //SQL = "SELECT * FROM unidb.incomereport WHERE TRno LIKE '%" + plate2check + "' ORDER BY TimeOut DESC";
             } else {
-                SQL = "SELECT * FROM unidb.incomereport WHERE TRno LIKE '%" + plate2check + "' ORDER BY TimeOut DESC";
+                SQL = "SELECT * FROM carpark.exit_trans WHERE ReceiptNumber LIKE '%" + receipt2check + "' ORDER BY DateTimeOUT DESC";
+                //SQL = "SELECT * FROM unidb.incomereport WHERE TRno LIKE '%" + plate2check + "' ORDER BY TimeOut DESC";
             }
             ResultSet rs = selectDatabyFields(SQL);
 
@@ -1911,7 +1912,7 @@ public class DataBaseHandler extends Thread {
                 rs.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
             }
             while (rs.next()) {
-                dataList2Show.add(rs.getString("TRno"));
+                dataList2Show.add(rs.getString("ReceiptNumber"));
                 //name = rs.getString("DateTimeOUT");
             }
 
@@ -2031,15 +2032,15 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public ResultSet getReceipt4Reprint(String plate2check, String date2check) {
+    public ResultSet getReceipt4Reprint(String plate2check, String receipt2check) {
         ResultSet rs;
         String SQL;
         if (plate2check.compareToIgnoreCase("*") == 0) {
-            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.DateTimeOUT = '" + date2check + "'";
+            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.ReceiptNumber = '" + receipt2check + "'";
         } else {
-            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.PlateNumber = '" + plate2check + "' AND x.DateTimeOUT = '" + date2check + "'";
+            SQL = "SELECT * FROM carpark.exit_trans AS x INNER JOIN pos_users.main AS p ON x.CashierName = p.usercode WHERE x.ReceiptNumber = '" + receipt2check + "'";
         }
-            SQL = "SELECT * FROM unidb.incomereport WHERE TRno = '" + date2check + "'";
+            //SQL = "SELECT * FROM unidb.incomereport WHERE TRno = '" + date2check + "'";
         
         try {
             rs = selectDatabyFields(SQL);

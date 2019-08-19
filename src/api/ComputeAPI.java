@@ -87,7 +87,8 @@ public class ComputeAPI {
     private Long timeStampIN;
     private Long timeStampPaid;
     private Long nextDueTimeStamp = 0L;
-    private boolean printerCutter;
+    private boolean roundoff2;
+    private boolean printerCutter;    
     private String printerType;
     private String datamode;
     private String exitType;
@@ -104,6 +105,7 @@ public class ComputeAPI {
             printerCutter = xr.getElementValue("C://JTerminals/initH.xml", "printerCutter").compareToIgnoreCase("true") == 0;
             exitType = xr.getElementValue("C://JTerminals/initH.xml", "exitType");
             datamode = xr.getElementValue("C://JTerminals/initH.xml", "datamode");
+            roundoff2 = xr.getElementValue("C://JTerminals/initH.xml", "roundoff2").compareToIgnoreCase("true") == 0;
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
@@ -609,6 +611,7 @@ public class ComputeAPI {
         }
          */
         //----------valid part II---------------
+        DecimalFormat df2 = new DecimalFormat("#.00");
         String DuplicateReceiptHeader = "";
         ParkersAPI pa = new ParkersAPI();
         int duplicateReceiptType = pa.checkDupReceiptFromPType(ParkerType);
@@ -617,21 +620,34 @@ public class ComputeAPI {
         double vat12 = getVat(AmountDue);
         double vatsale = getNonVat(AmountDue);
         String discount = "0.00";
+        double discountDbl = 0;
         double vatexempt = 0;
         //AmountGross = AmountDue;
         if (isDiscounted) {
             discountPercentage = pa.getdiscountPercentage(ParkerType);
-            discount = getDiscountFromVat(AmountGross, discountPercentage);
+            discountDbl = getdDiscountFromVat(AmountGross, discountPercentage);
+            
             vat12 = 0;
             vatsale = getNonVat(AmountGross);
             Double vatexemptF = AmountGross - (AmountGross / 1.12);
             vatexempt = vatexemptF;
-            AmountDue = (vatsale - Float.parseFloat(discount));
-            DecimalFormat df2 = new DecimalFormat("#.00");
+            if (roundoff2) {
+                discountDbl = Math.round(discountDbl * 100.0) / 100.0;
+                vatexempt = Math.round(vatexempt * 100.0) / 100.0;
+                vatsale = Math.round(vatsale * 100.0) / 100.0;
+            }
+            AmountDue = (vatsale - discountDbl);            
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
-            updateOneTransFiles("discount", Float.parseFloat(discount));
+            updateOneTransFiles("discount", discountDbl);
             updateOneTransFiles("vatExempt", vatexempt);            
         }
+            if (roundoff2) {
+                vat12 = Math.round(vat12 * 100.0) / 100.0;
+                vatsale = Math.round(vatsale * 100.0) / 100.0;
+                AmountDue = Math.round(AmountDue * 100.0) / 100.0;
+                AmountGross = Math.round(AmountGross * 100.0) / 100.0;
+            }
+            discount = df2.format(discountDbl);
             updateOneTransFiles("vat12", vat12);
             updateOneTransFiles("vatsale", vatsale);   
             updateOneTransFiles("gross", AmountGross);   
@@ -703,7 +719,7 @@ public class ComputeAPI {
                         SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatexempt, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
                     }
                 } else if (duplicateReceiptType == 2) {
-                    DuplicateReceiptHeader = "            CUSTOMER COPY";
+                    DuplicateReceiptHeader = "              CUSTOMER COPY";
                     if (printerType.compareToIgnoreCase("serial") == 0) {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
@@ -836,6 +852,19 @@ public class ComputeAPI {
         //return df2.format(vatSales);
         return vatSales;
     }
+    
+    private double getdDiscountFromVat(double AmountDue, float discountPercentage) {
+        if (AmountDue == 0) {
+            return 0D;
+        }
+        DecimalFormat df2 = new DecimalFormat("#.00");
+
+        //float vatSales = (float) (AmountDue * .12);
+        double vatSales = (double) (AmountDue / 1.12) * (discountPercentage / 100);
+        //return df2.format(vatSales);
+        return vatSales;
+    }
+
 
     private String getDiscountFromVat(double AmountDue, float discountPercentage) {
         if (AmountDue == 0) {
