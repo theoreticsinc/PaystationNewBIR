@@ -321,6 +321,47 @@ public class SaveCollData {
         rfh.putfile("C://JTerminals/FnF/iXyZp12R/", "astrid.jrt", newcurr);
     }
     
+    public String getGRANDGROSSTOTAL() throws IOException {
+        String curr = "";
+        boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
+        if (foundfile == true) {
+            curr = rfh.readFline("C://JTerminals/FnF/iXyZp12R/", "XOG" + ".jrt", 1);
+        } else {
+            curr = "0";
+        }
+        return curr;
+    }
+    
+    public void UpdateGRANDGROSSTOTAL(double AmountRCPT) throws IOException {
+        String newcurr = "";
+        boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
+        if (foundfile == true) {
+            String curr = rfh.readFline("C://JTerminals/FnF/iXyZp12R/", "XOG" + ".jrt", 1);
+
+            double newcount = 0;
+            double oldcount = Double.parseDouble(curr);
+            if (roundoff2) {
+                oldcount = Math.round(oldcount * 100.0) / 100.0;
+            }  
+            newcount = oldcount + AmountRCPT;
+            if (roundoff2) {
+                newcount = Math.round(newcount * 100.0) / 100.0;
+            } 
+            newcurr = String.valueOf(newcount);
+            rfh.putfile("C://JTerminals/FnF/iXyZp12R/", "XOG" + ".jrt", newcurr);
+        } else {
+            newcurr = String.valueOf(AmountRCPT);
+        }
+        rfh.putfile("C://JTerminals/FnF/iXyZp12R/", "XOG" + ".jrt", newcurr);
+//        try {
+//            Process s = Runtime.getRuntime().exec("sudo chmod 777 /JTerminals/FnF/iXyZp12R/XOR.jrt");
+//            s.waitFor();
+//        } catch (InterruptedException ex) {
+//            LogManager.getLogger(SaveCollData.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+    }
+    
     public String getGRANDTOTAL() throws IOException {
         String curr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
@@ -471,8 +512,9 @@ public class SaveCollData {
         try {
             String receiptNos = getReceiptNos();
             String grandTotal = getGRANDTOTAL();
+            String grandGrossTotal = getGRANDGROSSTOTAL();
             //String transaction = dbh.getTransactionNos();
-            dbh.saveZReadLogIn(logID, Exitpoint, receiptNos, grandTotal, lastTransaction, logcode);
+            dbh.saveZReadLogIn(logID, Exitpoint, receiptNos, grandTotal, grandGrossTotal, lastTransaction, logcode);
         } catch (IOException ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
@@ -484,8 +526,9 @@ public class SaveCollData {
         try {
             String endingReceiptNos = getReceiptNos();
             String endingGrandTotal = getGRANDTOTAL();
+            String endingGrandGrossTotal = getGRANDGROSSTOTAL();
             //String transaction = dbh.getTransactionNos();
-            dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+            dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
         
         } catch (IOException ex) {
             ex.printStackTrace();

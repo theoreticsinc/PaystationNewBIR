@@ -1008,7 +1008,7 @@ public class ParkersAPI {
                 black = true;
             }
             if(isReprint) {
-                eh.printline("            --- REPRINT ---");
+                //eh.printline("  --- REPRINT ---");
             }
             
             //SAVES ON POS JOURNALS
@@ -1158,7 +1158,7 @@ public class ParkersAPI {
                 black = true;
             }
             if (isReprint) {
-                eh.printline("          --- REPRINT ---");
+                //eh.printline("          --- REPRINT ---");
             }
 
             //SAVES ON POS JOURNALS

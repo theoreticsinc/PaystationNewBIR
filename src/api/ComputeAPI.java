@@ -687,7 +687,7 @@ public class ComputeAPI {
                 if (updateTrans2DB() == false) {//Updates Car Served and Total Amount
                 }
 
-                RNos = updateReceiptFiles(AmountDue);
+                RNos = updateReceiptFiles(AmountDue, AmountGross);
                 if (RNos.equalsIgnoreCase("") == true) {
                 }
                 RNos = stn.EX_SentinelID.substring(0, 4) + RNos;
@@ -1907,12 +1907,13 @@ public class ComputeAPI {
         return false;
     }
 
-    private String updateReceiptFiles(double AmountRCPT) {
+    private String updateReceiptFiles(double AmountRCPT, double GrossAmount) {
         try {
             SaveCollData scd = new SaveCollData();
             scd.UpdateReceiptNos();
             scd.UpdateReceiptAmount(AmountRCPT);                  //
             scd.UpdateGRANDTOTAL(AmountRCPT);
+            scd.UpdateGRANDGROSSTOTAL(GrossAmount);
             return scd.getReceiptNos();
         } catch (Exception ex) {
             log.error(ex.getMessage());

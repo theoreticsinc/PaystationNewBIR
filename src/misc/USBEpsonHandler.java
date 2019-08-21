@@ -215,18 +215,11 @@ public class USBEpsonHandler {
                 this.printline("5F Builders Center Bldg.");
                 this.printline("Salcedo Street Legaspi Village");
                 this.printline("Makati Philippines");
-                this.printline("VAT Reg TIN : 008-398-874-000");
+                this.printline("VAT Reg TIN : 008-398-874-00000");
                 this.startPrinter();
             }
             this.setBlack();
-            
-                this.printline("This Serves as your OFFICIAL RECEIPT");
-                this.printline("THIS RECEIPT SHALL BE VALID FOR FIVE(5)");
-                this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
-//                this.printline("     THIS DOCUMENT IS NOT VALID");
-//                this.printline("       FOR CLAIM OF INPUT TAX");
-                //this.startPrinter();
-            
+             
             this.setRed();
             
             if(footerline1PrintEnabled.compareToIgnoreCase("enabled") == 0) {
@@ -259,6 +252,13 @@ public class USBEpsonHandler {
             if(footerline10PrintEnabled.compareToIgnoreCase("enabled") == 0) {
                 this.printline(footerline10);
             }
+           
+                this.printline("This Serves as your OFFICIAL RECEIPT");
+                this.printline("THIS RECEIPT SHALL BE VALID FOR FIVE(5)");
+                this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
+//                this.printline("     THIS DOCUMENT IS NOT VALID");
+//                this.printline("       FOR CLAIM OF INPUT TAX");
+                //this.startPrinter();
            
             this.Justify((byte) 0);
             this.startPrinter();
@@ -635,8 +635,8 @@ public class USBEpsonHandler {
     }
     
     public void setRed() {
-        //byte[] red = new byte[] { 0x1b, 0x72, 0x01 };
-        byte[] red = new byte[] { 0x1b, 0x72, 0x00 };
+        byte[] red = new byte[] { 0x1b, 0x72, 0x01 };
+//        byte[] red = new byte[] { 0x1b, 0x72, 0x00 };
         printerService.printBytes(printerName, red);
     }
     
