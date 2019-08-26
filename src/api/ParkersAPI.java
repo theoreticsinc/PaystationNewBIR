@@ -1050,12 +1050,15 @@ public class ParkersAPI {
                     if (AmountDue <= 0) {
                         grossB4Discount = 0;
                     }
-                    eh.printline("Gross Sales                :  P" + displayAmount2Decimals(AmountGross));
+                    eh.printline("AMOUNT (w VAT)             :  P" + displayAmount2Decimals(AmountGross));
+                    eh.printline("Less: VAT                  :  P" + displayAmount2Decimals(vat12));
+                    eh.printline("Price Net of VAT           :  P" + displayAmount2Decimals(AmountGross - vat12));                
                     double lessDiscount = grossB4Discount - AmountDue;
                     if (AmountDue <= 0) {
                         lessDiscount = 0;
                     }
                     eh.printline("Less "+ptype+ " DSC " + discountPercentage+"% : -P" + displayAmount2Decimals(Float.parseFloat(discountFloat)));
+                    eh.printline("---------------------------------------");
                 } else {
                     eh.printline("Gross Sales                :  P" + displayAmount2Decimals(AmountGross));
                 }                
@@ -1066,7 +1069,7 @@ public class ParkersAPI {
                 //eh.printline("Discount                   :  P" + displayAmount2Decimals(Float.parseFloat(discountFloat)));                
             }
             //eh.selectEMstyle(true);
-                eh.printline("TOTAL AMOUNT               :  P" + displayAmount2Decimals(AmountDue));
+                eh.printline("TOTAL AMOUNT DUE           :  P" + displayAmount2Decimals(AmountDue));
             //eh.startPrinter();
             //eh.selectEMstyle(false);
             //eh.startPrinter();
