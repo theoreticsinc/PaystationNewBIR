@@ -421,7 +421,7 @@ public class SaveCollData {
         }
         return newcurr;
     }
-
+    
     public String getReceiptNos() throws IOException {
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
@@ -430,6 +430,51 @@ public class SaveCollData {
             int oldcount = Integer.parseInt(curr);
             if (oldcount == 0) {
                 oldcount = 1;
+            }
+            newReceipt = String.valueOf(oldcount);
+            int stoploop = 12 - newReceipt.length();
+            int i = 0;
+            do {
+                newReceipt = "0" + newReceipt;
+                i++;
+            } while (i != stoploop);
+        } else {
+            newReceipt = "000000000000";  //twelve digits
+        }
+        return newReceipt;
+    }
+    
+    public String getNextReceiptNos() throws IOException {
+        String newReceipt = "";
+        boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
+        if (foundfile == true) {
+            String curr = rfh.readFline("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", 1);
+            int oldcount = Integer.parseInt(curr) + 1;
+            if (oldcount == 0) {
+                oldcount = 1;
+            }
+            newReceipt = String.valueOf(oldcount);
+            int stoploop = 12 - newReceipt.length();
+            int i = 0;
+            do {
+                newReceipt = "0" + newReceipt;
+                i++;
+            } while (i != stoploop);
+        } else {
+            newReceipt = "000000000000";  //twelve digits
+        }
+        return newReceipt;
+    }
+
+    public String getGeneratedReceiptNos() throws IOException {
+        String newReceipt = "";
+        boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
+        if (foundfile == true) {
+            String curr = rfh.readFline("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", 1);
+            int oldcount = Integer.parseInt(curr);
+            if (oldcount <= 0) {
+                //oldcount = 1;
+                oldcount = 0;
             }
             newReceipt = String.valueOf(oldcount);
             int stoploop = 12 - newReceipt.length();
@@ -510,7 +555,7 @@ public class SaveCollData {
 
     public void saveZRead(String logID, String Exitpoint, String lastTransaction, String logcode) {
         try {
-            String receiptNos = getReceiptNos();
+            String receiptNos = getNextReceiptNos();
             String grandTotal = getGRANDTOTAL();
             String grandGrossTotal = getGRANDGROSSTOTAL();
             //String transaction = dbh.getTransactionNos();
@@ -524,12 +569,20 @@ public class SaveCollData {
     
     public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExempt, String discounts, String voidsCollected) {
         try {
-            String endingReceiptNos = getReceiptNos();
+            String endingReceiptNos = getGeneratedReceiptNos();
             String endingGrandTotal = getGRANDTOTAL();
+
             String endingGrandGrossTotal = getGRANDGROSSTOTAL();
-            //String transaction = dbh.getTransactionNos();
-            dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
-        
+            boolean wasReceiptGenerated = dbh.wasReceiptGenerated(logID, endingReceiptNos);
+            //if (endingReceiptNos.compareTo("000000000001") == 0) {
+            //    dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+            //}
+            if (wasReceiptGenerated) {
+                dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+            } else {
+                dbh.saveZReadLogOut(logID, Exitpoint, "000000000000", "000000000000", endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+            }
+            
         } catch (IOException ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());

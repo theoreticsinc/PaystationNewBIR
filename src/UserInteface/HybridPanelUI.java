@@ -477,9 +477,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SlotsComputer sc = new SlotsComputer(slotscompute);
         ThrSlotsClock = new Thread(sc);
         ThrSlotsClock.start();
-        //ShowExitCamera sec = new ShowExitCamera();
-        //ThrShowExitCamera = new Thread(sec);
-        //ThrShowExitCamera.start();
+        ShowExitCamera sec = new ShowExitCamera();
+        ThrShowExitCamera = new Thread(sec);
+        ThrShowExitCamera.start();
         //OnlineQuickUpdater qc = new OnlineQuickUpdater();
         //ThrQuickUpdaterClock = new Thread(qc);
         //ThrQuickUpdaterClock.start();
@@ -5448,17 +5448,19 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     //lm.saveLogintoFile(logname, LogUsercode2.getText());
                     lm.printLoginUSBSTUB(logStamp, LogUsercode2.getText(), logname, EX_SentinelID);
                     dbh.saveLog("L1", LogUsercode2.getText());
-                    lm.saveLogintoFile(logStamp, logID, LogUsercode2.getText(), logname);
                     currentmode = "";
-                    //REFRESH
-                    this.loginID = logID;
-                    this.startEntranceTransacting();
+                    //REFRESH                    
                     String lastTransaction = dbh.getLastTransaction(EX_SentinelID);
                     if (null == lastTransaction) {
+                        lastTransaction = "0000000000000001";
+                    } else if (lastTransaction.compareTo("0000000000000002") == 0) {
                         lastTransaction = "0000000000000001";
                     }
                     dbh.saveLogin(logID, CashierID, logname, EX_SentinelID);
                     scd.saveZRead(logID, EX_SentinelID, lastTransaction, LogUsercode2.getText());
+                    this.loginID = logID;
+                    this.startEntranceTransacting();
+                    lm.saveLogintoFile(logStamp, logID, LogUsercode2.getText(), logname);                    
                 }
 
                 CashierName = lm.getCashierName();
@@ -5726,12 +5728,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 lm.epsonPrintLogoutReceiptFromDB(EX_SentinelID, false);
                 
                 //---------------------------
-                lm.saveLogintoFile(logStamp, "", "", "");
-                SysMessage1.setText("LOGOUT Successful");
-                SysMessage3.setText("LOGCODE Found");
-                SysMessage4.setText("-Please Login again-");
-                Loginput.delete(0, Loginput.length());
-
+                
                 LogUsercode1.setText("");
                 LogPassword1.setText("");
                 LogUsercode2.setText("");
@@ -5766,7 +5763,14 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 ExitTickets.setText(scd.getExitTicketsServed());
                 LoginMOD la = new LoginMOD();
                 la.CheckValidCashierStamp(this);
+                
+                SysMessage1.setText("LOGOUT Successful");
+                SysMessage3.setText("LOGCODE Found");
+                SysMessage4.setText("-Please Login again-");
+                Loginput.delete(0, Loginput.length());
+                
                 this.StartLogInX();
+                lm.saveLogintoFile(logStamp, "", "", "");
                 return true;
             } else {//reset codeinputbox
                 LogUsercode1.setText("");
@@ -7604,7 +7608,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     //                           if(ThrDisplayPole.isInterrupted()==false)
                     //                           {ThrDisplayPole.yield();
                     //                            ThrDisplayPole.interrupt();}
-
+                    USBEpsonHandler eh = new USBEpsonHandler();
+                    eh.kickDrawer();        
                     Thread xit = new Thread(ea);
                     xit.setPriority(1);
                     xit.start();

@@ -78,6 +78,18 @@ public class USBEpsonHandler {
             log.error(ex.getMessage());
         }
     }
+    
+    public void kickDrawer() {
+        try {
+            
+            byte[] kick = new byte[] { 0x1b, 0x70, 0x00, 0x50, 0x60 };
+            printerService.printBytes(printerName, kick);
+            
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
 
     public void printTestHEADER() {
         try {
@@ -654,7 +666,8 @@ public class USBEpsonHandler {
 
     public static void main(String[] args) {
         USBEpsonHandler ea = new USBEpsonHandler();
-        ea.usbPrintTest();
+        //ea.usbPrintTest();
+        ea.kickDrawer();
     }
 
     public static void mainOld(String[] args) {

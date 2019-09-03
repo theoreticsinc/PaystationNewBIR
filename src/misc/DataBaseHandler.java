@@ -2076,7 +2076,8 @@ public class DataBaseHandler extends Thread {
             connection = getConnection(true);
             st = (Statement) connection.createStatement();
             if (receiptNos.compareToIgnoreCase("000000000000") == 0) {
-                receiptNos = "000000000001";
+                //receiptNos = "000000000001";
+                receiptNos = "000000000000";
             }
             String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, oldGrossTotal, zCount, tellerCode, logINID) "
                     + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, '" + grandGrossTotal + "', NULL, '" + logcode + "', " + logID + ")";
@@ -2097,6 +2098,22 @@ public class DataBaseHandler extends Thread {
             st = (Statement) connection.createStatement();
 
             st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
+
+            st.close();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean saveZReadLogOut(String loginID, String Exitpoint, String beginningReceiptNos, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExempt, String discounts, String voids) {
+        try {
+            connection = getConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE zread.main SET beginOR = '" + beginningReceiptNos + "', endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
 
             st.close();
             connection.close();
@@ -2158,6 +2175,31 @@ public class DataBaseHandler extends Thread {
             log.error(ex.getMessage());
         }
         return zreadLastDate;
+    }
+    
+    public boolean wasReceiptGenerated(String logID, String endingReceiptNos) {
+        try {
+            Integer bOR = 0;
+            Integer eRN = Integer.parseInt(endingReceiptNos);
+            connection = getConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT beginOR FROM zread.main WHERE logINID = '" + logID + "'");
+
+            if (rs.next()) {
+                bOR = rs.getInt("beginOR");
+            }
+            st.close();
+            connection.close();
+            if (eRN >= bOR) 
+            {
+                return true;
+            } else {
+                return false;
+            }
+            
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+        return false;
     }
 
     public boolean isZreadActive(String sentinel, String lastZread) {
@@ -2227,7 +2269,7 @@ public class DataBaseHandler extends Thread {
         } while (i != stoploop);
 
         return newString;
-    }
+    }    
 
     class prewait extends Thread {
 

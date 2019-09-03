@@ -1871,7 +1871,7 @@ public class LoginMOD extends javax.swing.JPanel {
                     //***********PRINT*******
                 }
                 
-                receiptNos = scd.getReceiptNos();
+                receiptNos = scd.getGeneratedReceiptNos();
                 grandTotal = scd.getGRANDTOTAL();
                 grandGrossTotal = scd.getGRANDGROSSTOTAL();
                 

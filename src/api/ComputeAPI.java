@@ -15,6 +15,7 @@ import misc.DataBaseHandler;
 import misc.DateConversionHandler;
 import misc.LogUtility;
 import misc.ParkerDataHandler;
+import misc.USBEpsonHandler;
 import misc.XMLreader;
 import modules.SaveCollData;
 import modules.SystemStatus;
