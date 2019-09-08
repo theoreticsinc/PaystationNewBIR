@@ -80,6 +80,14 @@ public class ExitAPI implements Runnable {
                         stn.entryCamera.setIcon(new ImageIcon(img));
                         stn.entryCamera.setText("ENTRY");
                     }
+                    if (stn.scanEXTCRD) {
+                            buf = dbh.GetImageFromEXTCRDDB(stn.CardInput2.getText());
+                            if (null != buf) {
+                                Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
+                                stn.entryCamera.setIcon(new ImageIcon(img));
+                                stn.entryCamera.setText("ENTRY");
+                            }
+                    }
                     //stn.AmtTendered.requestFocus();
                     return true;
                 } else if (process == 1) {

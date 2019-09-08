@@ -567,7 +567,7 @@ public class SaveCollData {
     }
     
     
-    public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExempt, String discounts, String voidsCollected) {
+    public void updateZRead(String logID, String Exitpoint, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExemptedSales, String discounts, String voidsCollected) {
         try {
             String endingReceiptNos = getGeneratedReceiptNos();
             String endingGrandTotal = getGRANDTOTAL();
@@ -575,12 +575,12 @@ public class SaveCollData {
             String endingGrandGrossTotal = getGRANDGROSSTOTAL();
             boolean wasReceiptGenerated = dbh.wasReceiptGenerated(logID, endingReceiptNos);
             //if (endingReceiptNos.compareTo("000000000001") == 0) {
-            //    dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+            //    dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExemptedSales, discounts, voidsCollected);
             //}
             if (wasReceiptGenerated) {
-                dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+                dbh.saveZReadLogOut(logID, Exitpoint, endingReceiptNos, endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExemptedSales, discounts, voidsCollected);
             } else {
-                dbh.saveZReadLogOut(logID, Exitpoint, "000000000000", "000000000000", endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExempt, discounts, voidsCollected);
+                dbh.saveZReadLogOut(logID, Exitpoint, "000000000000", "000000000000", endingGrandTotal, endingGrandGrossTotal, lastTransaction, logcode, totalAmount, grossAmount, vatSale, vat12Sale, vatExemptedSales, discounts, voidsCollected);
             }
             
         } catch (IOException ex) {

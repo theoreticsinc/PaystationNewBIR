@@ -24,6 +24,7 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -463,7 +464,6 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    
     public BufferedImage GetImageFromDB(String CardCode) {
         BufferedImage img = null;
         try {
@@ -511,6 +511,34 @@ public class DataBaseHandler extends Thread {
 //        frame.setVisible(true);
             //mediaPlayer.controls().stop();
             //show("Captured", img, 7);
+            return img;
+            
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return img;
+    }
+    
+    public BufferedImage GetImageFromEXTCRDDB(String CardCode) {
+        BufferedImage img = null;
+        try {
+            connection = getConnection(true);
+            String sql = "SELECT PIC FROM extcrd.main WHERE cardNumber = '" + CardCode + "'";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+
+            img = new BufferedImage(400, 400,
+                    BufferedImage.TYPE_BYTE_INDEXED);
+
+            while (resultSet.next()) {
+                InputStream is = resultSet.getBinaryStream(1);
+                try {
+                    img = ImageIO.read(is);
+                    is.close();
+                } catch (Exception ex) {
+                    
+                }
+            }
             return img;
             
         } catch (Exception ex) {
@@ -752,11 +780,11 @@ public class DataBaseHandler extends Thread {
     public boolean findExitCard(String cardNumber) throws SQLException {
         boolean found = false;
         connection = getConnection(true);
-        ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        ResultSet rs = selectDatabyFields("SELECT datetimeIN FROM extcrd.main WHERE cardNumber = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
         while (rs.next()) {
-            dateTimeIN = rs.getString("TimeIN");
+            dateTimeIN = rs.getString("datetimeIN");
             found = true;
         }
         st.close();
@@ -1761,17 +1789,49 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean writeExit(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, float amountPaid) {
+    public boolean writeExit(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, double amountPaid, BufferedImage buf) {
         try {
+            
             DateConversionHandler dch = new DateConversionHandler();
             long DateINStamp = dch.convertJavaDate2UnixTime4Card(DateIN);
             long DatePaidStamp = dch.convertJavaDate2UnixTime4Card(DatePaid);
             long NextDueStamp = dch.convertJavaDate2UnixTime4Card(NextDue);
+            
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(buf, "jpg", os);
+            InputStream is = new ByteArrayInputStream(os.toByteArray());
+//            connection = getConnection(true);
+//            st = (Statement) connection.createStatement();
             connection = getConnection(true);
-            st = (Statement) connection.createStatement();
-            st.execute("INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, amountPaid) VALUES ('P1', 'EN01', '" + CardNumber + "', '" + PlateCheck + "', '" + trtype + "', false, '" + DateIN + "', '" + DateINStamp + "', '" + DatePaid + "', '" + DatePaidStamp + "', '" + NextDue + "', '" + NextDueStamp + "', " + amountPaid + ")");
-            st.close();
+            PreparedStatement statement;
+            //st.execute("INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, 
+                     //datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, 
+                     //amountPaid)
+                     //VALUES ('P1', 'EN01', '" + CardNumber + "', '" + PlateCheck + "', '" + trtype + "', false, 
+                     //'" + DateIN + "', '" + DateINStamp + "', '" + DatePaid + "', '" + DatePaidStamp + "', '" + NextDue + "', '" + NextDueStamp + "', " + amountPaid + ")");
+            
+            String SQL = "INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, "
+                    + "datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, "
+                    + "amountPaid, PIC) "
+                    + "VALUES ('P1', 'EN01', ?, ?, ?, false, ?, ?, ?, ?, ?, ?, ?, ?)";
+            statement = connection.prepareStatement(SQL);
+            statement.setString(1, CardNumber);
+            statement.setString(2, PlateCheck);
+            statement.setString(3, trtype);
+            statement.setString(4, DateIN);
+            statement.setLong(5, DateINStamp);
+            statement.setString(6, DatePaid);
+            statement.setLong(7, DatePaidStamp);            
+            statement.setString(8, NextDue);
+            statement.setLong(9, NextDueStamp);
+            statement.setDouble(10, amountPaid);
+            statement.setBinaryStream(11, (InputStream) is, (int) (os.size()));
+            statement.executeUpdate();
+            //st.execute();
+            statement.close();
             connection.close();
+            is.close();
+            os.close();
             return true;
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -2092,12 +2152,12 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExempt, String discounts, String voids) {
+    public boolean saveZReadLogOut(String loginID, String Exitpoint, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExemptedSales, String discounts, String voids) {
         try {
             connection = getConnection(true);
             st = (Statement) connection.createStatement();
 
-            st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
+            st.execute("UPDATE zread.main SET endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExemptedSales =" + vatExemptedSales + " WHERE logINID = '" + loginID + "'");
 
             st.close();
             connection.close();
@@ -2108,12 +2168,12 @@ public class DataBaseHandler extends Thread {
         }
     }
     
-    public boolean saveZReadLogOut(String loginID, String Exitpoint, String beginningReceiptNos, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExempt, String discounts, String voids) {
+    public boolean saveZReadLogOut(String loginID, String Exitpoint, String beginningReceiptNos, String endingReceiptNos, String endingGrandTotal, String endingGrandGrossTotal, String lastTransaction, String logcode, String totalAmount, String grossAmount, String vatSale, String vat12Sale, String vatExemptedSales, String discounts, String voids) {
         try {
             connection = getConnection(true);
             st = (Statement) connection.createStatement();
 
-            st.execute("UPDATE zread.main SET beginOR = '" + beginningReceiptNos + "', endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExempt =" + vatExempt + " WHERE logINID = '" + loginID + "'");
+            st.execute("UPDATE zread.main SET beginOR = '" + beginningReceiptNos + "', endOR = '" + endingReceiptNos + "', endTrans = '" + lastTransaction + "', newGrand = '" + endingGrandTotal + "', newGrossTotal = '" + endingGrandGrossTotal + "', todaysGross = '" + grossAmount + "', datetimeOut = CURRENT_TIMESTAMP, voids =" + voids + ", todaysale =" + totalAmount + ", discounts =" + discounts + ",  vatablesale =" + vatSale + ", 12vat =" + vat12Sale + ", vatExemptedSales =" + vatExemptedSales + " WHERE logINID = '" + loginID + "'");
 
             st.close();
             connection.close();
@@ -2722,7 +2782,7 @@ public class DataBaseHandler extends Thread {
             connection = getConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, DATE(datetimeOut) AS datetimeOut, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, CAST(SUM(todaysGross) AS decimal(20,2)) AS TODAYSGROSS, "
-                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExempt) AS decimal(20,2)) AS VATEXEMPT, "
+                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExemptedSales) AS decimal(20,2)) AS vatExemptedSales, "
                     + "CAST(SUM(discounts) AS decimal(20,2)) AS DISCOUNTS, CAST(SUM(voids) AS decimal(20,2)) AS VOIDS, "
                     + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, "
                     + "LPAD(MIN(beginTrans),20,0) AS beginTrans, LPAD(MAX(endTrans),20,0) AS endTrans, "
@@ -2751,7 +2811,7 @@ public class DataBaseHandler extends Thread {
             connection = getConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, datetimeOut, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, CAST(SUM(todaysGross) AS decimal(20,2)) AS TODAYSGROSS, "
-                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExempt) AS decimal(20,2)) AS VATEXEMPT, "
+                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExemptedSales) AS decimal(20,2)) AS vatExemptedSales, "
                     + "CAST(SUM(discounts) AS decimal(20,2)) AS DISCOUNTS, CAST(SUM(voids) AS decimal(20,2)) AS VOIDS, "
                     + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, "
                     + "LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
@@ -2780,7 +2840,7 @@ public class DataBaseHandler extends Thread {
             connection = getConnection(true);
             //SELECT terminalnum, datetimeOut, SUM(todaysale), min(beginOR), max(endOR), min(beginTrans), MIN(endTrans), MIN(oldGrand), MAX(newGrand) FROM `main` dataList2Show date(datetimeOut) = "2018-09-14"
             String sql = "SELECT terminalnum, CURRENT_TIMESTAMP, CAST(SUM(todaysale) AS decimal(20,2)) AS TODAYSALE, CAST(SUM(todaysGross) AS decimal(20,2)) AS TODAYSGROSS, "
-                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExempt) AS decimal(20,2)) AS VATEXEMPT, "
+                    + "CAST(SUM(vatablesale) AS decimal(20,2)) AS VATABLESALE, CAST(SUM(12VAT) AS decimal(20,2)) AS VAT12, CAST(SUM(vatExemptedSales) AS decimal(20,2)) AS vatExemptedSales, "
                     + "CAST(SUM(discounts) AS decimal(20,2)) AS DISCOUNTS, CAST(SUM(voids) AS decimal(20,2)) AS VOIDS, "
                     + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrossTotal) AS decimal(11,2)) AS oldGrossTotal, CAST(MAX(newGrossTotal) AS decimal(11,2)) AS newGrossTotal,  "

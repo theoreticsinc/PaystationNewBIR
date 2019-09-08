@@ -78,6 +78,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public boolean debugMode = false;
     private boolean altIsPressed = false;
     String switchmode = null;
+    public boolean scanEXTCRD = false;
     String bundleName = "mapping.idproperties";
     ResourceBundle myResources = ResourceBundle.getBundle(bundleName, Locale.getDefault());
     static Logger log = LogManager.getLogger(HybridPanelUI.class.getName());
@@ -5745,14 +5746,14 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 Float discountCollected = dbh.getImptAmount("discountAmount", loginID);
                 Float vatsaleAmount = dbh.getImptAmount("vatsaleAmount", loginID);
                 Float vat12Amount = dbh.getImptAmount("vat12Amount", loginID);
-                Float vatExemptAmount = dbh.getImptAmount("vatExemptAmount", loginID);                
+                Float vatExemptedSalesAmount = dbh.getImptAmount("vatExemptedSalesAmount", loginID);                
                 //Float voidsCollected = dbh.getImptAmount("voidsAmount", loginID);
                 Float voidsCollected = 0f;
                 
                 //Double Sale12Vat = (double) totalCollected * 0.12;
                 //Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
                 //Double vatSale = totalCollected - Sale12Vat;
-                scd.updateZRead(loginID, EX_SentinelID, lastTransaction, compcode, String.valueOf(totalCollected), String.valueOf(grossCollected), String.valueOf(vatsaleAmount), String.valueOf(vat12Amount), String.valueOf(vatExemptAmount), String.valueOf(discountCollected), String.valueOf(voidsCollected));
+                scd.updateZRead(loginID, EX_SentinelID, lastTransaction, compcode, String.valueOf(totalCollected), String.valueOf(grossCollected), String.valueOf(vatsaleAmount), String.valueOf(vat12Amount), String.valueOf(vatExemptedSalesAmount), String.valueOf(discountCollected), String.valueOf(voidsCollected));
                 scd.ResetCarServed();
                 scd.ResetExitCarServed();
                 scd.ResetEntryTicketsServed();
@@ -7594,7 +7595,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //            if (PrinterEnabled == true) {
         //if (isEnterPressed == true || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
             //PrevPlate = Plateinput.toString();
-            if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0) {
+            if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0 || scanEXTCRD == true) {
                 //********This prevents from scanning the card again.
                 PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
                 //This is for Paystation Only 
@@ -7614,7 +7615,9 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     xit.setPriority(1);
                     xit.start();
                     resetAllOverrides();
-                    //                        ea.ValidPartII();
+                    if (scanEXTCRD) {
+                        ea.ValidPartII();
+                    }                   
                     this.resetAllOverrides();
                     firstscan = true;
                 }
