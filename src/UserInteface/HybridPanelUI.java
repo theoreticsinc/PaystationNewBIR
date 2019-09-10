@@ -151,7 +151,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String loginID;
     public String serverIP, key;
     public String BackupMainServer, printer, printerType, slotsmode, SlotsResetEnabled, sResetTime;
-    public String payuponentry;
+    public String payuponentry, exitType;
     public boolean slotscompute = false;
     public Date busyStamp = new Date();
     public Date SavedStamp = new Date();
@@ -292,6 +292,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             TerminalType = xr.getAttributeValue("C://JTerminals/initH.xml", "terminal_id", "type");
             EN_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HNterminal_id");
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
+            exitType = xr.getElementValue("C://JTerminals/initH.xml", "exitType");
             ParkingArea = xr.getElementValue("C://JTerminals/initH.xml", "area_id");
             SlotsID = xr.getElementValue("C://JTerminals/initH.xml", "slots_id");
             serverIP = xr.getElementValue("C://JTerminals/initH.xml", "server_ip");

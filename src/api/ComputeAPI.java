@@ -170,8 +170,7 @@ public class ComputeAPI {
                         //sets = SP.retrieveCRDPLTFromDB(CardCheck, stn.serverIP, true);
                         sets = SP.retrieveEXTCRDFromDB(CardCheck, stn.serverIP, true);
                         if (sets) {
-                            stn.scanEXTCRD = true;
-                            
+                            stn.scanEXTCRD = true;                            
                         }
                     }
                     dataFromCard = false;
@@ -595,6 +594,8 @@ public class ComputeAPI {
     }
 
     public void ValidPartII() {
+        stn.Cardinput.delete(0, stn.Cardinput.length());
+        stn.CardInput2.setText("PROCESSING...");
         ParkersAPI SP = new ParkersAPI();
         ParkerDataHandler PDH = new ParkerDataHandler();
         SystemStatus ss = new SystemStatus();
@@ -680,7 +681,9 @@ public class ComputeAPI {
             } else {
                 n = sdf.format(dch.convertJavaUnixTime2Date4DB(nextDueTimeStamp));
             }
-            SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, stn.trtype, AmountDue + AmountPaid);
+            if (stn.exitType.compareTo("unmanned") == 0) {
+                SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, stn.trtype, AmountDue + AmountPaid);
+            }
             SP.eraseCRDPLTFromDB(CardCheck);            
             try {
                 if (datamode.compareToIgnoreCase("cards") == 0) {
