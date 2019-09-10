@@ -2788,7 +2788,7 @@ public class DataBaseHandler extends Thread {
                     + "LPAD(MIN(beginTrans),20,0) AS beginTrans, LPAD(MAX(endTrans),20,0) AS endTrans, "
                     + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand,  "
                     + "CAST(MIN(oldGrossTotal) AS decimal(11,2)) AS oldGrossTotal, CAST(MAX(newGrossTotal) AS decimal(11,2)) AS newGrossTotal,  "
-                    + "MIN(zCount) AS startZCount, MAX(zCount) AS endZCount FROM zread.main "
+                    + "zCount, MAX(zCount) AS endZCount FROM zread.main "
                     + "where logINID = '" + logINID + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
@@ -2816,8 +2816,8 @@ public class DataBaseHandler extends Thread {
                     + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, "
                     + "LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrossTotal) AS decimal(11,2)) AS oldGrossTotal, CAST(MAX(newGrossTotal) AS decimal(11,2)) AS newGrossTotal,  "
-                    + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand,  "
-                    + "MIN(zCount) AS startZCount, MAX(zCount) AS endZCount FROM zread.main "
+                    + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand, "
+                    + "zCount, MAX(zCount) AS endZCount FROM zread.main "
                     + "where date(datetimeOut) = '" + dateColl + "'";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset
@@ -2844,7 +2844,7 @@ public class DataBaseHandler extends Thread {
                     + "CAST(SUM(discounts) AS decimal(20,2)) AS DISCOUNTS, CAST(SUM(voids) AS decimal(20,2)) AS VOIDS, "
                     + "LPAD(MIN(beginOR),12,0) AS BEGINOR, LPAD(MAX(endOR),12,0) AS ENDOR, LPAD(MIN(beginTrans),16,0) AS beginTrans, LPAD(MAX(endTrans),16,0) AS endTrans, "
                     + "CAST(MIN(oldGrossTotal) AS decimal(11,2)) AS oldGrossTotal, CAST(MAX(newGrossTotal) AS decimal(11,2)) AS newGrossTotal,  "
-                    + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand,  MIN(zCount) AS startZCount, MAX(zCount) AS endZCount "
+                    + "CAST(MIN(oldGrand) AS decimal(11,2)) AS oldGrand, CAST(MAX(newGrand) AS decimal(11,2)) AS newGrand, zCount, MAX(zCount) AS endZCount "
                     + "FROM zread.main where date(datetimeOut) = date(CURRENT_TIMESTAMP)";
             rs = selectDatabyFields(sql);
             // iterate through the java resultset

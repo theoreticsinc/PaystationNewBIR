@@ -7,6 +7,7 @@
     <slots_port>COM7</slots_port>
     <login_id>1176600010001151412</login_id>
     <server_ip>127.0.0.1</server_ip>
+    <roundoff2>true</roundoff2>
     <journal>enabled</journal>
     <joggers>enabled</joggers>
     <datamode>db</datamode><!--cards or db -->
@@ -24,10 +25,10 @@
     <BIRfooter>enabled</BIRfooter>
     <payuponentry>disabled</payuponentry>
     <headerline1 print="enabled">CHINESE GENERAL HOSPITAL AND MEDICAL CTR</headerline1>
-    <headerline2 print="enabled">#6 Rizal Avenue,Brgy.San Isidro </headerline2>
-    <headerline3 print="enabled">Taytay, Rizal 1920</headerline3>
-    <headerline4 print="enabled">VAT REG TIN: 123-836-930-00000</headerline4>
-    <headerline5 print="enabled">Multi Speciality Clinic</headerline5>
+    <headerline2 print="enabled">286 BLUMENTRITT ST. STA. CRUZ MANILA</headerline2>
+    <headerline3 print="enabled">VAT REG TIN: 000-328-853-00000</headerline3>
+    <headerline4 print="enabled">Multi Speciality Clinic</headerline4>
+    <headerline5 print="disabled"></headerline5>
     <headerline6 print="disabled"></headerline6>
     <headerline7 print="disabled"></headerline7>
     <headerline8 print="disabled"></headerline8>

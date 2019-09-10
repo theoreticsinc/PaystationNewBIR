@@ -829,7 +829,7 @@ public class ParkersAPI {
             eh.Justify((byte) 0);
             String ptemp = this.checkPTypeFromDB(ParkerType);
             eh.printline(".::" + ptemp + "::.");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.setBlack();
             eh.printline("Plate Number : " + Plateno);
             eh.printline("Entry Point : " + Entrypoint);
@@ -837,16 +837,16 @@ public class ParkersAPI {
             eh.printline("Total : " + VAmount + "0");
             eh.printline("VAT : " + VAT + "0");
             eh.printline("Amount (incl. TAX): " + StrAmount + "0");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.setRed();
             eh.printline("Cashier : " + CashierName);
             eh.printline(RNos);
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.Justify((byte) 1);
             eh.printline("This serves as your");
             eh.printline("Official Receipt");
             eh.printline("Thank you. Please Park with us Again");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.printHEADER(SentinenlID);
             //eh.fullcut();
             eh.closePrinter();
@@ -919,7 +919,7 @@ public class ParkersAPI {
             }
             eh.printline(duplicateReceiptHeader);
             eh.Justify((byte) 0);
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.printline("Ent ID.:" + Entrypoint);
             eh.printline("Location: POS Reception");
             eh.printline("Plate Number:" + Plateno);
@@ -1039,7 +1039,7 @@ public class ParkersAPI {
 
             eh.startPrinter();
             eh.Justify((byte) 0);
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.printline("Ent ID.:" + Entrypoint);
             eh.printline("Cashier ID:" + CashierID);
             eh.printline("Cashier Name:" + CashierName);
@@ -1204,7 +1204,7 @@ public class ParkersAPI {
 
             eh.startPrinter();
             eh.Justify((byte) 0);
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.printline("Ent ID.:" + Entrypoint);
             eh.printline("Cashier ID:" + CashierID);
             eh.printline("Cashier Name:" + CashierName);
@@ -1864,7 +1864,7 @@ public class ParkersAPI {
             } else {
                 eh.printline(".::OVERNIGHT PARKER::.");
             }
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.setBlack();
             eh.printline("Plate Number : " + Plateno);
             eh.printline("Entry Point : " + Entrypoint);
@@ -1874,16 +1874,16 @@ public class ParkersAPI {
             eh.printline("Total : " + VAmount + "0");
             eh.printline("VAT : " + VAT + "0");
             eh.printline("Amount (incl. TAX): " + StrAmount + "0");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.setRed();
             eh.printline("Cashier : " + CashierName);
             eh.printline(RNos);
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.Justify((byte) 1);
             eh.printline("This serves as your");
             eh.printline("Official Receipt");
             eh.printline("Thank you. Please Park with us Again");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.printHEADER(SentinenlID);
             //eh.fullcut();
             eh.closePrinter();
@@ -1907,7 +1907,7 @@ public class ParkersAPI {
             eh.Justify((byte) 0);
             String ptemp = this.checkPTypeFromDB(ParkerType);
             eh.printline(".::" + ptemp + "::.");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.setBlack();
             eh.printline("Plate Number : " + Plateno);
             eh.printline("Entry Point : " + Entrypoint);
@@ -1917,16 +1917,16 @@ public class ParkersAPI {
             eh.printline("Total : " + VAmount + "0");
             eh.printline("VAT : " + VAT + "0");
             eh.printline("Amount (incl. TAX): " + StrAmount + "0");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.setRed();
             eh.printline("Cashier : " + CashierName);
             eh.printline(RNos);
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.Justify((byte) 1);
             eh.printline("This serves as your");
             eh.printline("Official Receipt");
             eh.printline("Thank you. Please Park with us Again");
-            eh.feedpaperup((byte) 1);
+            eh.printline("");
             eh.printHEADER(SentinenlID);
 //            eh.fullcut();
             eh.closePrinter();

@@ -270,10 +270,10 @@ public class USBEpsonHandler {
                 this.printline("YEARS FROM THE DATE OF THE PERMIT TO USE");
 //                this.printline("     THIS DOCUMENT IS NOT VALID");
 //                this.printline("       FOR CLAIM OF INPUT TAX");
-                //this.startPrinter();
-           
+                //this.startPrinter();           
+            this.startPrinter();            
             this.Justify((byte) 0);
-            this.startPrinter();
+            
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }

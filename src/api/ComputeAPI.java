@@ -657,6 +657,7 @@ public class ComputeAPI {
             AmountDue = (vatExemptedSales - discountDbl);            
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             updateOneTransFiles("discount", discountDbl);
+            updateOneTransFiles("exemptedVat12", getVat(AmountGross));         
             updateOneTransFiles("vatExemptedSales", vatExemptedSales);            
         }
             if (roundoff2) {
