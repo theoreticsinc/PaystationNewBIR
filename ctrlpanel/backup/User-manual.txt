@@ -1,0 +1,9 @@
+Hello bro ito pala ung user manual at kung papaano ngwowork ung system
+
+1. searching cash and card accountability
+  -> Bale need mo mg search ng from and until date. ung from and until date pre makikita mo sya sa cash na table at field name nung date ay loginDate so pag sinearch mo na yan lalabas ung mga cashiername gnun..and connected din yan sa exit_tbl na table.. dpat kung mgaadd ka ng values gnun din sa exit tbl. connected din kasi yan eh
+2. Collection report gnun din search ka ng from and until date pero hinuhugot yan pre sa cash table at exit table pre mgka join ung table na yun so kung gusto mo mg add dpat ung dlwang table eh ng aadd ka din ng gnung values
+3. Yung collection report per hour naman pre ay huhugutin mo lang ung data galing sa entrace table :)
+gnun lang..
+tapos pla wala akong ginamit na API PHP built in function pra mg dL ng csv at pdf pre :) no need kasi my gnung function na sa PHP
+

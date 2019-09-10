@@ -1,0 +1,10 @@
+.noborder{border:none; font-size: 1em; width:100%; background: none;}
+.fortextarea{width:100%; height: 15%;}
+.printme{font-size: 75%}
+.companyinfo{font-size: 60%;}
+.taguro{width: 100%;}
+.modal-wide{width: 120%;}
+.box{border:ridge;}
+.legendsize{font-size: 100%; margin-bottom: 0%; background-color: gray;}
+.printdata{width:70%; border:none; text-transform: uppercase;}
+.checkbox-grid li {margin-left: -5%;width: 35%;border:none;float: left; font-size:75%;}
