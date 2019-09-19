@@ -33,8 +33,8 @@ public class CRDPLTcheckDupAPI {
             stmt = conn.createStatement();
             //RawFileHandler rfh = new RawFileHandler();
             //boolean found = rfh.FindFileFolder("/SYSTEMS/", card2check + ".crd");
-            //String SQL = "SELECT * FROM crdplt.main WHERE cardNumber = '" +card2check + "'";
-            String SQL = "SELECT * FROM unidb.timeindb WHERE CardCode = '" +card2check + "'";
+            String SQL = "SELECT * FROM crdplt.main WHERE cardNumber = '" +card2check + "'";
+            //String SQL = "SELECT * FROM unidb.timeindb WHERE CardCode = '" +card2check + "'";
             ResultSet found = stmt.executeQuery(SQL);
                 if (found.next()) {
                     //Cardno = found.getString(2);

@@ -254,7 +254,7 @@ public class ParkersAPI {
         return found;
     }
 
-    public boolean writeExitCRD2DB(boolean scanEXTCRD, String card2check, String PlateCheck, String datetimeIN, String datetimePaid, String datetimeNextDue, String trtype, double amountPaid) {
+    public boolean writeExitCRD2DB(boolean scanEXTCRD, String card2check, String PlateCheck, String datetimeIN, String datetimePaid, String datetimeNextDue, String trtype, double amountPaid, boolean isLost) {
         boolean written = false;
         try {
             DataBaseHandler dbh = new DataBaseHandler();            
@@ -267,7 +267,7 @@ public class ParkersAPI {
             dbh.eraseExitCard(card2check);            
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-            written = dbh.writeExit(card2check, PlateCheck, datetimeIN, datetimePaid, datetimeNextDue, trtype, amountPaid, buf);
+            written = dbh.writeExit(card2check, PlateCheck, datetimeIN, datetimePaid, datetimeNextDue, trtype, amountPaid, buf, isLost);
 
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -1292,6 +1292,10 @@ public class ParkersAPI {
                 }
                 float discountPercentage = 0;
                 discountPercentage = pa.getdiscountPercentage(ParkerType);
+                SimpleDateFormat sdfIN = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                SimpleDateFormat sdfOUT = new SimpleDateFormat("MM dd, yy hh:mm:ss aaa");
+                Date dIN = sdfIN.parse(rs.getString("DateTimeIN"));
+                Date dOUT = sdfIN.parse(rs.getString("DateTimeOUT"));
                 printUSBReceipt(
                         firstRun,
                         true,
@@ -1300,15 +1304,15 @@ public class ParkersAPI {
                         rs.getString("PlateNumber"),
                         "",
                         ParkerType,
-                        rs.getString("DateTimeIN"),
-                        rs.getString("DateTimeOUT"),
+                        sdfOUT.format(dIN),
+                        sdfOUT.format(dOUT),
                         rs.getLong("HoursParked"),
                         rs.getLong("MinutesParked"),
                         rs.getFloat("Amount"),
                         rs.getFloat("GrossAmount"),
                         rs.getFloat("vat12"),
                         rs.getFloat("vatsale"),
-                        rs.getFloat("vatExemptedSalesAmount"),
+                        rs.getFloat("vatExemptedSales"),
                         rs.getString("ReceiptNumber"),
                         rs.getString("CashierName"),
                         rs.getString("username"),
@@ -2018,7 +2022,8 @@ public class ParkersAPI {
         boolean status2;
         try {
             //boolean status2 = stmt.execute("DELETE FROM crdplt.main WHERE CONVERT(`main`.`"+Cardno+"` USING utf8) = '000010' LIMIT 1;");
-            status2 = stmt.execute("DELETE FROM unidb.timeindb WHERE CardCode = '" + Cardno + "' LIMIT 1;");
+            //status2 = stmt.execute("DELETE FROM unidb.timeindb WHERE CardCode = '" + Cardno + "' LIMIT 1;");
+            status2 = stmt.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + Cardno + "' LIMIT 1;");
             conn = DB.getConnection(true);
             stmt = conn.createStatement();
             //status2 = stmt.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + Cardno + "' LIMIT 1;");

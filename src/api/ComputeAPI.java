@@ -42,6 +42,7 @@ public class ComputeAPI {
     public long HoursPaidElapsed = 0;
     public long MinutesPaidElapsed = 0;
     public long NumHrs2ComputeCurrent = 0;
+    public String trtypeHolder;
 
     private int HourIN = 0;
     private int MinIN = 0;
@@ -456,7 +457,8 @@ public class ComputeAPI {
                     }
                 }
             }
-            if (isLost) {
+            trtypeHolder = stn.trtype;
+            if (isLost) {                
                 stn.trtype = "L";
                 ParkerType = "L";
             }
@@ -683,7 +685,7 @@ public class ComputeAPI {
                 n = sdf.format(dch.convertJavaUnixTime2Date4DB(nextDueTimeStamp));
             }
             if (stn.exitType.compareTo("unmanned") == 0) {
-                SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, stn.trtype, AmountDue + AmountPaid);
+                SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, trtypeHolder, AmountDue + AmountPaid, isLost);
             }
             SP.eraseCRDPLTFromDB(CardCheck);            
             try {
@@ -698,6 +700,12 @@ public class ComputeAPI {
             if (exitType.compareToIgnoreCase("manned") == 0) {
                 SP.eraseEXTCRDFromDB(CardCheck);
             }
+            
+            if (isLost) {
+                ParkerType = "L";
+                stn.trtype = "L";
+            }
+            
             try {
                 if (roundoff2) {
                     AmountDue = Math.round(AmountDue * 100.0) / 100.0;
@@ -808,8 +816,12 @@ public class ComputeAPI {
 
             } catch (Exception x) {
 
-            }
-
+            }            
+        ParkerType = trtypeHolder;
+        if(isLost) {
+            stn.trtype = "L";
+            ParkerType = "L";
+        }
         boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
@@ -824,6 +836,7 @@ public class ComputeAPI {
         }
         //SP.UpdateCarSlots(stn.EX_SentinelID);
         stn.trtype = "R";
+        ParkerType = "R";
         stn.resetAllOverrides();
         stn.Cardinput.delete(0, stn.Cardinput.length());
         stn.CardInput2.setText("PRINTING...");

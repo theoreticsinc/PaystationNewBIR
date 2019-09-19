@@ -24,10 +24,10 @@
     <footer>enabled</footer>
     <BIRfooter>enabled</BIRfooter>
     <payuponentry>disabled</payuponentry>
-    <headerline1 print="enabled">CHINESE GENERAL HOSPITAL AND MEDICAL CTR</headerline1>
+    <headerline1 print="enabled">PHIL-CHINESE CHARITABLE ASSOC INC</headerline1>
     <headerline2 print="enabled">286 BLUMENTRITT ST. STA. CRUZ MANILA</headerline2>
     <headerline3 print="enabled">VAT REG TIN: 000-328-853-00000</headerline3>
-    <headerline4 print="enabled">Multi Speciality Clinic</headerline4>
+    <headerline4 print="enabled">Chinese General Hospital and Medical Ctr</headerline4>
     <headerline5 print="disabled"></headerline5>
     <headerline6 print="disabled"></headerline6>
     <headerline7 print="disabled"></headerline7>
@@ -35,18 +35,18 @@
     <headerline9 print="disabled"></headerline9>
     <headerline10 print="disabled"></headerline10>
     <receiptno>000123</receiptno>
-    <footerline1 print="enabled">       THANK YOU. FOR PARKING</footerline1>
-    <footerline2 print="enabled">           DRIVE SAFELY !!!</footerline2>
-    <footerline3 print="disabled"></footerline3>
-    <footerline4 print="disabled"></footerline4>
-    <footerline5 print="disabled"></footerline5>
-    <footerline6 print="disabled"></footerline6>
-    <footerline7 print="disabled"></footerline7>
-    <footerline8 print="disabled"></footerline8>
-    <footerline9 print="disabled"></footerline9>
-    <footerline10 print="disabled"></footerline10>
-    <message1>Thank you for coming</message1>
-    <message2>please come again</message2>
+    <footerline1 print="disabled"></footerline1>
+    <footerline2 print="disabled"></footerline2>
+    <footerline3 print="enabled">ACCRED: XXXXXXXXXXXXXXXXX</footerline3>
+    <footerline4 print="enabled">Date Issued:  9/25/2019</footerline4>
+    <footerline5 print="enabled">Valid Until:  9/24/2024</footerline5>
+    <footerline6 print="enabled">PTU NO: NDM34523423</footerline6>
+    <footerline7 print="enabled">Date Issued:  11/19/2019</footerline7>
+    <footerline8 print="enabled">VALID UNTIL:  11/20/2024</footerline8>
+    <footerline9 print="enabled">THANK YOU. FOR PARKING</footerline9>
+    <footerline10 print="enabled">DRIVE SAFELY !!!</footerline10>
+    <message1>please visit</message1>
+    <message2>www.theoretics.com.ph</message2>
     <feederlines>8</feederlines>
     <serialno>EXT01-XXXXXXXXX</serialno>
     <resetCount>0</resetCount>

@@ -30,6 +30,13 @@ include'config/DBController.php';
 #idletimeout { background:#CC5100; border:3px solid #FF6500; color:#fff; font-family:arial, sans-serif; text-align:center; font-size:12px; padding:10px; position:relative; top:0px; left:0; right:0; z-index:100000; display:none; }
 #idletimeout a { color:#fff; font-weight:bold }
 #idletimeout span { font-weight:bold }
+.td {
+   padding:0; margin:0;
+}
+
+#page {
+   border-collapse: collapse;
+}
 .txtfield
 {
   width:50%;
@@ -93,9 +100,9 @@ include'config/DBController.php';
                 </script>');
             $from = filter($_GET['from']);//POST from date
             $until = filter($_GET['until']);//POST from Date
-            $query = "SELECT DATE(datetimeOut) as datetimeOut, ROUND(SUM(todaysale),2) AS todaysale, ROUND(SUM(todaysGross),2) AS todaysGross, ROUND(SUM(vatablesale),2) as vatablesale, ROUND(SUM(12vat),2) as vat12, ROUND(SUM(vatExempt), 2) as vatExempt, LPAD(MIN(beginOR),12,0) as beginOR, LPAD(MAX(endOR),12,0) as endOR, ROUND(MIN(oldGrand),2) as oldGrand, ROUND(MIN(newGrossTotal),2) as newGrossTotal, ROUND(MIN(oldGrossTotal),2) as oldGrossTotal, ROUND(MAX(newGrand),2) as newGrand, SUM(discounts) as discounts, ABS(SUM(voids)) as voids FROM zread.main WHERE DATE(DateTimeOUT) BETWEEN '$from' AND '$until' ORDER BY terminalnum, datetimeOut DESC";
+            $query = "SELECT DATE(datetimeOut) as datetimeOut, ROUND(SUM(todaysale),2) AS todaysale, ROUND(SUM(todaysGross),2) AS todaysGross, ROUND(SUM(vatablesale),2) as vatablesale, ROUND(SUM(12vat),2) as vat12, ROUND(SUM(vatExemptedSales), 2) as vatExempt, LPAD(MIN(beginOR),20,0) as beginOR, LPAD(MAX(endOR),20,0) as endOR, ROUND(MIN(oldGrand),2) as oldGrand, ROUND(MIN(newGrossTotal),2) as newGrossTotal, ROUND(MIN(oldGrossTotal),2) as oldGrossTotal, ROUND(MAX(newGrand),2) as newGrand, SUM(discounts) as discounts, ABS(SUM(voids)) as voids, zCount FROM zread.main WHERE DATE(DateTimeOUT) BETWEEN '$from' AND '$until' GROUP BY DATE(datetimeOut) ORDER BY terminalnum, datetimeOut DESC";
             $cash = getdata_inner_join($query); //query for getting the results
-            //echo $cash;  
+            //echo $query;  
             $_SESSION['from'] = $from;
             $_SESSION['until'] = $until;
             //$query1 = "SELECT * FROM cash INNER JOIN exit_tbl on cash.cashierName = exit_tbl.CashierName WHERE DATE(loginDate) BETWEEN '$from' AND '$until'";
@@ -109,8 +116,8 @@ include'config/DBController.php';
                      TIN: 000-328-853-000<br>
                      <b>Reporting Period for POS: EX01</b>
           </div>
-          <table class="table table-border" width="100%" >
-            <tr style="font-size: 9px;">
+          <table class="table-border" width="100%" style="padding: 2px"> 
+            <tr style="font-size: 8px;">
               <td></td>
               <td></td>
               <td></td>
@@ -123,16 +130,16 @@ include'config/DBController.php';
               <td></td>
               <td></td>
               <td></td>
-              <td colspan="2" style="background-color: rgb(180,180,180);">Deductions</td>
-              <td></td>
+              <td colspan="5" style="background-color: rgb(180,180,180); text-align: center; padding: 2px">Deductions</td>
+              <td colspan="5" style="background-color: rgb(180,180,180); text-align: center; padding: 2px">Adjustments on VAT</td>
               <td></td>
             </tr>
-            <tr style="font-size: 9px;">
+            <tr style="font-size: 9px; text-align: center;">
               <td><b>Date</b></td>
               <td><b>Beginning<br> OR No.</b></td>
               <td><b>Ending<br> OR No.</b></td>
-              <td><b>Grand<br>Accumulating<br>Sales<br>Ending</b></td>
-              <td><b>Grand<br>Accumulating<br>Sales<br>Beginning</b></td>
+              <td><b>Grand<br>Accum.<br>Sales<br>Ending</b></td>
+              <td><b>Grand<br>Accum.<br>Sales<br>Beginning</b></td>
               <td><b>Gross<br>Sales<br>for<br>the Day</b></td>
               <td><b>Sales<br>Issued<br>w Manual<br>SI/OR</b></td>
               <td><b>Gross<br>Sales<br>From<br>POS</b></td>
@@ -140,22 +147,33 @@ include'config/DBController.php';
               <td><b>VAT<br>Amount</b></td>
               <td><b>VAT-Exempt<br>Sales</b></td>
               <td><b>Zero<br>Rated<br>Sales</b></td>
+              <td><b>Regular<br>Discount</b></td>
               <td><b>Special<br>Discount<br>SC/PWD</b></td>
+              <td><b>Returns</b></td>
+              <td><b>Void</b></td>
               <td><b>Total Deductions</b></td>
 
+              <td><b>VAT<br>on<br>Special<br>Discounts</b></td>
+              <td><b>VAT<br>on<br>Returns</b></td>
+              <td><b>Others</b></td>
+              <td><b>Total<br>VAT<br>Adj.</b></td>
+              
               <td><b>VAT<br>Payable</b></td>
               <td><b>Net<br>Sales</b></td>
+              <td><b>Other<br>Income</b></td>
+              <td><b>Sales<br>Overrun/<br>Overflow</b></td>
               <td><b>Total<br>Net<br>Sales</b></td>
+              <td><b>Z-<br>Count</b></td>
               <td><b>Remarks</b></td>
               
             </tr>
             
             <?php if(!empty($cash)):?>
             <?php foreach ($cash as $key => $value):?>
-             <tr style="font-size: 10px;">
+             <tr style="font-size: 10px; text-align: center; padding: 2px">
               <td><?php echo $value->datetimeOut?></td>
-              <td><?php echo $value->beginOR?></td>
-              <td><?php echo $value->endOR?></td>
+              <td><?php echo "EX01" . $value->beginOR?></td>
+              <td><?php echo "EX01" . $value->endOR?></td>
               <td><?php echo $value->newGrossTotal?></td>
               <td><?php echo $value->oldGrossTotal?></td>
               <td><?php echo $value->newGrossTotal - $value->oldGrossTotal?></td>
@@ -165,14 +183,22 @@ include'config/DBController.php';
               <td><?php echo $value->vat12?></td>
               <td><?php echo $value->vatExempt?></td>
               <td>0.00</td>
-
+              <td>0.00</td>              
               <td><?php echo round($value->discounts,2)?></td>
+              <td>0.00</td>
+              <td>0.00</td>               
               <td><?php echo round($value->discounts,2)?></td>
 
+              <td><?php echo round($value->vatExempt * 0.12,2)?></td>  
+              <td>0.00</td>
+              <td>0.00</td>
+              <td><?php echo round($value->vatExempt * 0.12,2)?></td>   
               <td><?php echo $value->vat12?></td>
-              <td><?php echo round($value->newGrossTotal - $value->oldGrossTotal - $value->discounts - $value->voids - $value->vat12, 2)?></td>
-              <td><?php echo round($value->newGrossTotal - $value->oldGrossTotal - $value->discounts - $value->voids - $value->vat12, 2)?></td>
-              
+              <td><?php echo round($value->todaysale,2)?></td>
+              <td>0.00</td>
+              <td>0.00</td>              
+              <td><?php echo round($value->todaysale,2)?></td>
+              <td><?php echo $value->zCount?></td>
               <td></td>
             </tr>
             <?php endforeach;?>

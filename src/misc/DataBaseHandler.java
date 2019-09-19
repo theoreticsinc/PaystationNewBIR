@@ -464,11 +464,12 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public BufferedImage GetImageFromDB(String CardCode) {
+    public BufferedImage GetImageFromDB(String cardNumber) {
         BufferedImage img = null;
         try {
             connection = getConnection(true);
-            String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE CardCode = '" + CardCode + "'";
+            //String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'";
+            String sql = "SELECT cardNumber, plateNumber, PIC FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
 
@@ -551,7 +552,8 @@ public class DataBaseHandler extends Thread {
         
         try {
             connection = getConnection(true);
-            String sql = "SELECT COUNT(CardCode) AS Count FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
+            //String sql = "SELECT COUNT(CardCode) AS Count FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
+            String sql = "SELECT COUNT(cardNumber) AS Count FROM crdplt.main WHERE datetimeIN BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
             
@@ -572,7 +574,8 @@ public class DataBaseHandler extends Thread {
         BufferedImage[] img = new BufferedImage[10];
         try {
             connection = getConnection(true);
-            String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
+            //String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE Timein BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
+            String sql = "SELECT cardNumber, plateNumber, PIC FROM crdplt.main WHERE datetimeIN BETWEEN '" + BeginDate + "' AND '" + EndDate + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
 
@@ -765,11 +768,13 @@ public class DataBaseHandler extends Thread {
     public boolean findEntranceCard(String cardNumber) throws SQLException {
         boolean found = false;
         connection = getConnection(true);
-        ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        //ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        ResultSet rs = selectDatabyFields("SELECT datetimeIN"
+                + " FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
         while (rs.next()) {
-            dateTimeIN = rs.getString("Timein");
+            dateTimeIN = rs.getString("datetimeIN");
             found = true;
         }
         st.close();
@@ -796,7 +801,8 @@ public class DataBaseHandler extends Thread {
         boolean found = false;
         connection = getConnection(true);
         st = (Statement) connection.createStatement();
-        st.execute("DELETE FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        //st.execute("DELETE FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        st.execute("DELETE FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'");
         st.close();
         connection.close();
         found = findEntranceCard(cardNumber);
@@ -1359,17 +1365,19 @@ public class DataBaseHandler extends Thread {
     public String getEntCard(String cardNumber) throws SQLException {
         String data = "";
         connection = getConnection(true);
-        ResultSet rs = selectDatabyFields("SELECT * FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        //ResultSet rs = selectDatabyFields("SELECT * FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        ResultSet rs = selectDatabyFields("SELECT * FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'");
         DateConversionHandler dch = new DateConversionHandler();
         // iterate through the java resultset
         while (rs.next()) {
-            String entranceID = rs.getString("Lane");
-            String cardNum = rs.getString("CardCode");
-            String plateNumber = rs.getString("Plate");
+            String entranceID = rs.getString("entranceID");
+            String cardNum = rs.getString("cardNumber");
+            String plateNumber = rs.getString("plateNumber");
             String trtype = "R";
-            Timestamp dateIN = rs.getTimestamp("Timein");
+            Timestamp dateIN = rs.getTimestamp("datetimeIN");
             dateTimeINStamp = String.valueOf(dch.convertJavaDate2UnixTime4Card(dateIN));
-            boolean isLost = false;
+//            boolean isLost = false;
+            boolean isLost = rs.getBoolean("isLost");
             // print the results
             System.out.format("%s, %s, %s, %s, %s\n", cardNum, plateNumber, dateIN, trtype, dateIN);
 
@@ -1423,7 +1431,8 @@ public class DataBaseHandler extends Thread {
     public String getEntDatefromCard(String cardNumber) throws SQLException {
         String dateIN = "";
         connection = getConnection(true);
-        ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        //ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        ResultSet rs = selectDatabyFields("SELECT datetimeIN FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'");
 
         while (rs.next()) {
             dateIN = rs.getString("TimeIN");
@@ -1451,7 +1460,8 @@ public class DataBaseHandler extends Thread {
     public String getExtDatefromCard(String cardNumber) throws SQLException {
         String dateIN = "";
         connection = getConnection(true);
-        ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        //ResultSet rs = selectDatabyFields("SELECT Timein FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        ResultSet rs = selectDatabyFields("SELECT datetimeIN FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'");
 
         while (rs.next()) {
             dateIN = rs.getString("datetimePaid");
@@ -1779,7 +1789,8 @@ public class DataBaseHandler extends Thread {
                 isLoststr = "0";
             }
             //New LOST Input
-            st.execute("INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp) VALUES ('P1', 'EN01', '" + CardNumber + "', '' , '" + trtype + "', " + isLost + ", '" + DateIN + "','" + DateInStamp + "')");
+            st.execute("INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp) "
+                    + "VALUES ('P1', 'EN01', '" + CardNumber + "', '' , '" + trtype + "', " + isLost + ", '" + DateIN + "','" + DateInStamp + "')");
             st.close();
             connection.close();
             return true;
@@ -1789,7 +1800,7 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean writeExit(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, double amountPaid, BufferedImage buf) {
+    public boolean writeExit(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, double amountPaid, BufferedImage buf, boolean isLost) {
         try {
             
             DateConversionHandler dch = new DateConversionHandler();
@@ -1813,19 +1824,20 @@ public class DataBaseHandler extends Thread {
             String SQL = "INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, "
                     + "datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, "
                     + "amountPaid, PIC) "
-                    + "VALUES ('P1', 'EN01', ?, ?, ?, false, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "VALUES ('P1', 'EN01', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             statement = connection.prepareStatement(SQL);
             statement.setString(1, CardNumber);
             statement.setString(2, PlateCheck);
             statement.setString(3, trtype);
-            statement.setString(4, DateIN);
-            statement.setLong(5, DateINStamp);
-            statement.setString(6, DatePaid);
-            statement.setLong(7, DatePaidStamp);            
-            statement.setString(8, NextDue);
-            statement.setLong(9, NextDueStamp);
-            statement.setDouble(10, amountPaid);
-            statement.setBinaryStream(11, (InputStream) is, (int) (os.size()));
+            statement.setBoolean(4, isLost);
+            statement.setString(5, DateIN);
+            statement.setLong(6, DateINStamp);
+            statement.setString(7, DatePaid);
+            statement.setLong(8, DatePaidStamp);            
+            statement.setString(9, NextDue);
+            statement.setLong(10, NextDueStamp);
+            statement.setDouble(11, amountPaid);
+            statement.setBinaryStream(12, (InputStream) is, (int) (os.size()));
             statement.executeUpdate();
             //st.execute();
             statement.close();

@@ -7532,7 +7532,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             modal = true;
         } else if (InvalidFlatRate == true) {
             ExitAPI ea = new ExitAPI(this);
-            PreviousCard = CardInput2.getText();
+            PreviousCard = Cardinput.toString();
+            //PreviousCard = CardInput2.getText();
             if (ea.InitiateInvalids() == true) {
                 this.repaint();
                 this.validate();
@@ -7598,7 +7599,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //PrevPlate = Plateinput.toString();
             if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0 || scanEXTCRD == true) {
                 //********This prevents from scanning the card again.
-                PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
+                PreviousCard = Cardinput.toString();
+                //PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit
                 //This is for Paystation Only 
                 //if (this.Plateinput.length() >= 6) {
                 //    this.PlateInput2.setText(Plateinput.toString());

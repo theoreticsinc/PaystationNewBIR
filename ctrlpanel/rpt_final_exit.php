@@ -228,7 +228,7 @@ if (isset($_POST["export"])) {
         <tr>
           <td><b>Volume:</td></td>
           <td><?php 
-                $query = "SELECT COUNT(DateTimeOUT) as total, SUM(Amount) as amount FROM carpark.exit_trans WHERE DATE(DateTimeOUT) BETWEEN '$from ' AND '$until '";
+                $query = "SELECT COUNT(DateTimeOUT) as total, ROUND(SUM(Amount),2) as amount FROM carpark.exit_trans WHERE DATE(DateTimeOUT) BETWEEN '$from ' AND '$until '";
                 $trans = single_inner_join($query);//query for getting the results
                 $total = 0;
                 $amount = 0;
@@ -245,53 +245,7 @@ if (isset($_POST["export"])) {
           </td>
         </tr>
           </table>
-          <?php
-          $query = "SELECT * FROM carpark.void_trans WHERE DATE(DateTimeOUT) BETWEEN '$from ' AND '$until ' GROUP BY ExitID, DateTimeOUT ORDER BY ExitID, DateTimeOUT DESC";
-            //echo $query;
-            $cash = getdata_inner_join($query); //query for getting the results
-            ?>
-          <table class="table table-border">
-            <tr>
-              <td><b>VOID TRANSACTIONS</b></td>
-            </tr>
-            <tr>
-              <td><b>Receipt Number</b></td>
-              <td><b>Cashier<br> Name</b></td>
-              <td><b>Entry<br> ID</b></td>
-              <td><b>Exit<br> ID</b></td>
-              <td><b>Card<br> Number</b></td>
-              <td><b>Plate<br> Number</b></td>
-              <td><b>Parker<br> Type</b></td>
-              <td><b>Date/Time<br> IN</b></td>
-              <td><b>Date/Time<br> OUT</b></td>
-              <td><b>Hours Parked</b></td>
-              <td><b>Minutes Parked</b></td>
-              <td><b>Settlement Ref</b></td>
-              <td><b>Amount</b></td>
-              
-            </tr>
-            <?php if(!empty($cash)):?>
-            <?php foreach ($cash as $key => $value):?>
-             <tr>
-              <td><?php echo $value->ReceiptNumber?></td>
-              <td><?php echo $value->CashierName?></td>
-              <td><?php echo $value->EntranceID?></td>
-              <td><?php echo $value->ExitID?></td>
-              <td><?php echo $value->CardNumber?></td>
-              <td><?php echo $value->PlateNumber?></td>
-              <td><?php echo $value->ParkerType?></td>
-              <td><?php echo $value->DateTimeIN?></td>
-              <td><?php echo $value->DateTimeOUT?></td>
-              <td><?php echo $value->HoursParked?></td>
-              <td><?php echo $value->MinutesParked?></td>
-              <td><?php echo $value->SettlementRef?></td>
-              <td><?php echo $value->Amount?></td>
-              
-            </tr>
-            <?php endforeach;?>
-          <?php else:?>
-          There are no records on the database
-        <?php endif;?>
+          
         <tr><td></td></tr>
         <tr>
           <td><b>Volume:</td></td>

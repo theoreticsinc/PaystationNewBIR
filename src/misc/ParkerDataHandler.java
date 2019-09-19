@@ -148,7 +148,7 @@ public class ParkerDataHandler {
         return false;
     }
 
-    public boolean saveParkerDB(String ipaddress, String username, String password, String AreaID, String entranceID, String Card, String Plate, String TRType, String DateTimeIN, Long timeStampIN) {
+    public boolean saveParkerDB(String ipaddress, String username, String password, String AreaID, String entranceID, String Card, String Plate, String TRType, boolean isLost, String DateTimeIN, Long timeStampIN) {
         DataBaseHandler DB = new DataBaseHandler();
         //DateTimeIN should now be null because Mysql is inserting a default timestamp
         //DateTimeIN = "";
@@ -211,38 +211,44 @@ public class ParkerDataHandler {
 
             conn = DB.getConnection(true);
             //WITH CAMERA TO DATABASE
-            String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                    + "(NULL, ?, 'CAR' , ?, NULL, ?, ?, ?, 'ENTRY', ?)";
+            //int status2 = stmt.executeUpdate("INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp) "
+            //        + "VALUES ('" + AreaID + "', '" + entranceID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '0', '" + DateTimeIN + "','" + timeStampIN.toString() + "')");
+            //String SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
+            //        + "(NULL, ?, 'CAR' , ?, NULL, ?, ?, ?, 'ENTRY', ?)";
+            String SQL = "";
             statement = conn.prepareStatement(SQL);
             if (null != is1 && null != is2) {
+                SQL = "INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp, PIC, PIC2) VALUES "
+                    + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 statement = conn.prepareStatement(SQL);
-                statement.setBinaryStream(4, is1, 1024 * 96); //Last Parameter has to be bigger than actual      
-                statement.setBinaryStream(5, is2, 1024 * 96); //Last Parameter has to be bigger than actual 
-                statement.setString(6, DateTimeIN);
+                statement.setBinaryStream(9, is1, 1024 * 1024); //Last Parameter has to be bigger than actual      
+                statement.setBinaryStream(10, is2, 1024 * 1024); //Last Parameter has to be bigger than actual 
             }
             if (null == is1 && null != is2) {
-                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                        + "(NULL, ?, 'CAR' , ?, NULL, NULL, ?, ?, 'ENTRY', ?)";
+                SQL = "INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp, PIC, PIC2) VALUES "
+                      + "(?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)";
                 statement = conn.prepareStatement(SQL);
-                statement.setBinaryStream(4, is2, 1024 * 96); //Last Parameter has to be bigger than actual 
-                statement.setString(5, DateTimeIN);
+                statement.setBinaryStream(9, is2, 1024 * 1024); //Last Parameter has to be bigger than actual 
             }
             if (null != is1 && null == is2) {
-                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                        + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, ?, 'ENTRY', ?)";
+                SQL = "INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp, PIC, PIC2) VALUES "
+                      + "(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)";
                 statement = conn.prepareStatement(SQL);
-                statement.setBinaryStream(4, is1, 1024 * 96); //Last Parameter has to be bigger than actual 
-                statement.setString(5, DateTimeIN);
+                statement.setBinaryStream(9, is1, 1024 * 1024); //Last Parameter has to be bigger than actual 
             }
             if (null == is1 && null == is2) {
-                SQL = "INSERT INTO unidb.timeindb (`ID`, `CardCode`, `Vehicle`, `Plate`, `Operator`, `PC`, `PIC`, `PIC2`, `Lane`, `Timein`) VALUES "
-                        + "(NULL, ?, 'CAR' , ?, NULL, ?, NULL, NULL, 'ENTRY', ?)";
+                SQL = "INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp, PIC, PIC2) VALUES "
+                       + "(?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)";
                 statement = conn.prepareStatement(SQL);
-                statement.setString(4, DateTimeIN);
             }
-            statement.setString(1, Card);
-            statement.setString(2, Plate);
-            statement.setString(3, EntryID);
+            statement.setString(1, AreaID);
+            statement.setString(2, entranceID);
+            statement.setString(3, Card);
+            statement.setString(4, Plate);
+            statement.setString(5, TRType);
+            statement.setBoolean(6, isLost);
+            statement.setString(7, DateTimeIN);
+            statement.setString(8, timeStampIN.toString());
 
             statement.executeUpdate();
 

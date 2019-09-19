@@ -307,7 +307,7 @@ echo '
             Theoretics Inc.
         </div>
         <!-- Default to the left -->
-        <strong>Copyright &copy; 2017 <a href="#">Theoretics Inc</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2019 <a href="#">Theoretics Inc</a>.</strong> All rights reserved.
       </footer>
 </div><!--/page-wrapper(content) -->
 

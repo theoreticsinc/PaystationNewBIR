@@ -24,7 +24,7 @@ include'config/main_function.php';
 
 <body  class="hold-transition skin-green sidebar-mini">
   <div class="wrapper">
-	
+  
 <style type="text/css">
 #idletimeout { background:#CC5100; border:3px solid #FF6500; color:#fff; font-family:arial, sans-serif; text-align:center; font-size:12px; padding:10px; position:relative; top:0px; left:0; right:0; z-index:100000; display:none; }
 #idletimeout a { color:#fff; font-weight:bold }
@@ -142,7 +142,7 @@ include'config/main_function.php';
              $timefrom = filter($_GET['timefrom']);//POST from date
              $timeuntil = filter($_GET['timeuntil']);//POST from Date
              //SELECT * FROM `audit` LEFT JOIN activitycodes ON activityCode = code ORDER BY `activityDate` DESC
-            $query = "SELECT * FROM logs.audit a INNER JOIN logs.activitycodes c ON (a.activityCode = c.code) LEFT JOIN pos_users.main p ON (a.activityOwner = p.usercode) WHERE DATE(a.activityDate) BETWEEN '$from $timefrom' AND '$until $timeuntil' ORDER BY a.activityDate DESC";
+            $query = "SELECT * FROM logs.audit a INNER JOIN logs.activitycodes c ON (a.activityCode = c.code) LEFT JOIN carpark.exit_trans x ON (a.activityDetails = x.ReceiptNumber) LEFT JOIN pos_users.main p ON (a.activityOwner = p.usercode) WHERE DATE(a.activityDate) BETWEEN '$from $timefrom' AND '$until $timeuntil' ORDER BY a.activityDate DESC";
             //echo $query;
             $cash = getdata_inner_join($query); //query for getting the results
 
@@ -179,11 +179,17 @@ include'config/main_function.php';
             </tr>
             <tr>
               <td><b>Activity Date</b></td>
-              <td><b>Transaction ID</b></td>
+              <td><b>Trans.<br>ID</b></td>
               <td><b>POS ID</b></td>
               <td><b>Activity<br> Owner</b></td>
               <td><b>Usercode</b></td>
               <td><b>Activty</b></td>
+              <td><b>Gross<br>Amount</b></td>
+              <td><b>Cash<br>Collection</b></td>
+              <td><b>12% VAT</b></td>
+              <td><b>Vatable<br>Sales</b></td>
+              <td><b>VAT<br>Exempted Sales</b></td>
+              <td><b>Discount</b></td>
               
             </tr>
             <?php if(!empty($cash)):?>
@@ -194,7 +200,14 @@ include'config/main_function.php';
               <td><?php echo $value->sentinelID?></td>
               <td><?php echo $value->username?></td>
               <td><?php echo $value->activityOwner?></td>
-              <td><?php echo $value->description?></td>              
+              <td><?php echo $value->description?></td>
+              <td><?php echo $value->GrossAmount?></td>
+              <td><?php echo $value->Amount?></td>
+              <td><?php echo $value->vat12?></td> 
+              <td><?php echo $value->vatsale?></td> 
+              <td><?php echo $value->vatExemptedSales?></td> 
+              <td><?php echo $value->discount?></td> 
+              
             </tr>
             <?php endforeach;?>
           <?php else:?>

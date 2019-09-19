@@ -471,11 +471,11 @@ public class LoginMOD extends javax.swing.JPanel {
 
                 terminalnum = "Terminal N0:   " + terminalnum;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysale = "Today's Sales      : " + todaysale_dbl;
+                String todaysale = "Today's Net Sales     : " + todaysale_dbl;
                 String todaysGross = "Today's Gross       : " + todaysGross_dbl;
                 String vatablesale = "VAT Sales          : " + vatablesale_dbl;
                 String vat12 = "12% VAT Sales      : " + vat12_dbl;
-                String vatExemptedSales = "VAT Exempt          : " + vatExemptedSales_dbl;
+                String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
                 String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
                 //String voids =       "VOIDS               : " + voids_dbl;
@@ -564,11 +564,11 @@ public class LoginMOD extends javax.swing.JPanel {
                 terminalnum = "Terminal N0:   " + terminalnum;
 //                datetimeOut = "Date:          " + datetimeOut;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysale   = "Today's Sales       : " + todaysale_dbl;
+                String todaysale   = "Today's Net Sales   : " + todaysale_dbl;
                 String todaysGross = "Today's Gross       : " + todaysGross_dbl;
                 String vatablesale = "VAT Sales           : " + vatablesale_dbl;
                 String vat12 = "12% VAT Sales       : " + vat12_dbl;
-                String vatExemptedSales = "VAT Exempt          : " + vatExemptedSales_dbl;
+                String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
                 String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
                 //String voids =       "VOIDS               : " + voids_dbl;
@@ -660,7 +660,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 String todaysGross = "Today's Gross       : " + todaysGross_dbl;
                 String vatablesale = "VAT Sale            : " + vatablesale_dbl;
                 String vat12 = "12% VAT Sale        : " + vat12_dbl;
-                String vatExemptedSales = "VAT Exempt          : " + vatExemptedSales_dbl;
+                String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
                 String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
                 //String voids =       "VOIDS               : " + voids_dbl;
@@ -1402,8 +1402,6 @@ public class LoginMOD extends javax.swing.JPanel {
         eh.closePrinter();
     }
     
-    
-
     //06/16/2019
     //CURRENT ZREAD WITH X READING (Today's)
     public void epsonPrintTOTALLogoutReceiptFromDB(String Exitpoint) {
