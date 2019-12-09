@@ -71,6 +71,7 @@ public class ComputeAPI {
     public boolean FoundPlate = false;
     private double AmountGross;
     private double AmountDue;
+    private double NetOfDiscount;
     private double tenderFloat;
     private float AmountPaid = 0;
     private String RNos = "";
@@ -566,14 +567,15 @@ public class ComputeAPI {
                 vat12 = 0;
                 vatsale = 0;
                 vatExemptedSales = getNonVat(AmountDue);
-                AmountDue = (vatExemptedSales - Float.parseFloat(discount));
+                NetOfDiscount = (vatExemptedSales - Float.parseFloat(discount));
+                AmountDue = NetOfDiscount + (NetOfDiscount * .12);
                 DecimalFormat df2 = new DecimalFormat("#.00");
                 stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
             }
             DecimalFormat df2 = new DecimalFormat("#.00");
             stn.AMOUNTdisplay.setText("P " + String.valueOf(df2.format(AmountDue)));
             stn.npd.PlateNo.setText("P " + String.valueOf(AmountDue) + "0");
-            if (AmountDue <= 0) {
+            if (AmountDue <= 0) {   
                 stn.AMOUNTdisplay.setText("P 0.00");
                 stn.npd.PlateNo.setText("P 0.00");
             }            
@@ -647,20 +649,24 @@ public class ComputeAPI {
             discountPercentage = pa.getdiscountPercentage(ParkerType);
             discountDbl = getdDiscountFromVat(AmountGross, discountPercentage);
             
-            vat12 = 0;
-            vatsale = 0;
-            Double vatExemptedSalesedSales = getNonVat(AmountGross);
-            vatExemptedSales = vatExemptedSalesedSales;
+//            vat12 = 0;
+//            vatsale = 0;
+            Double vT = getNonVat(AmountGross);
+//            vatExemptedSales = vatExemptedSalesedSales;
             if (roundoff2) {
                 discountDbl = Math.round(discountDbl * 100.0) / 100.0;
-                vatExemptedSales = Math.round(vatExemptedSales * 100.0) / 100.0;
+                vT = Math.round(vT * 100.0) / 100.0;
                 vatsale = Math.round(vatsale * 100.0) / 100.0;
             }
-            AmountDue = (vatExemptedSales - discountDbl);            
+            NetOfDiscount = (vT - discountDbl);
+            AmountDue = NetOfDiscount + (NetOfDiscount * .12);
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
+            updateOneTransFiles("vat12", vat12);
+            updateOneTransFiles("vatsale", vatsale);   
+            updateOneTransFiles("gross", AmountGross);   
             updateOneTransFiles("discount", discountDbl);
-            updateOneTransFiles("exemptedVat12", getVat(AmountGross));         
-            updateOneTransFiles("vatExemptedSales", vatExemptedSales);            
+            updateOneTransFiles("exemptedVat12", 0);         
+            updateOneTransFiles("vatExemptedSales", 0);            
         }
             if (roundoff2) {
                 vat12 = Math.round(vat12 * 100.0) / 100.0;
@@ -748,7 +754,7 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
                     }
                 } else if (duplicateReceiptType == 2) {
                     DuplicateReceiptHeader = "              CUSTOMER COPY";
@@ -756,14 +762,14 @@ public class ComputeAPI {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
                     }
                     DuplicateReceiptHeader = "        ACCOUNTING / STORE COPY";
                     if (printerType.compareToIgnoreCase("serial") == 0) {
                         SP.printSerialReceipt(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, stn.settlementRef, DuplicateReceiptHeader);
                         //SP.saveReceiptforDUP(stn.EX_SentinelID, Entrypoint, Plateno, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, RNos, stn.CashierName, OvernightOverride);
                     } else {
-                        SP.printUSBReceipt(false, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+                        SP.printUSBReceipt(false, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
                     }
                 }
             }
@@ -800,7 +806,7 @@ public class ComputeAPI {
 
             }
 
-            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
+            SP.printUSBReceipt(stn.firstRun, false, stn.EX_SentinelID, Entrypoint, Plateno, CardCheck, ParkerType, TimeIN, TimeOUT, HoursElapsed, MinutesElapsed, NetOfDiscount, AmountDue, AmountGross, vat12, vatsale, vatExemptedSales, RNos, stn.CashierID, stn.CashierName, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, DuplicateReceiptHeader, isDiscounted, discountPercentage, tenderFloat, stn.ChangeDisplay.getText(), discount, printerCutter);
 
         }
         String transactionNum = stn.EX_SentinelID.substring(2) + "" + RNos;
@@ -822,7 +828,7 @@ public class ComputeAPI {
             stn.trtype = "L";
             ParkerType = "L";
         }
-        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
+        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(NetOfDiscount), String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
         }
@@ -879,6 +885,18 @@ public class ComputeAPI {
     }
 
     private double getNonVat(double AmountDue) {
+        if (AmountDue == 0) {
+            return 0;
+        }
+        DecimalFormat df2 = new DecimalFormat("#.00");
+
+        //float vatSales = (float) (AmountDue * .12);
+        double vatSales = (double) (AmountDue / 1.12);
+        //return df2.format(vatSales);
+        return vatSales;
+    }
+    
+    private double getAddVat(double AmountDue) {
         if (AmountDue == 0) {
             return 0;
         }
@@ -2515,24 +2533,24 @@ public class ComputeAPI {
         /////GRACE PERIOD
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 0;
-        computed = ca.Computation("R", true, false);
+        computed = ca.Computation("P", true, false);
         System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
 
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 19;
-        computed = ca.Computation("R", true, false);
+        computed = ca.Computation("P", true, false);
         System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
         /////
         
         for (int i = 1; i <= 48; i++) {
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 0;
-            computed = ca.Computation("R", true, false);
+            computed = ca.Computation("P", true, false);
             System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
 
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 1;
-            computed = ca.Computation("R", true, false);
+            computed = ca.Computation("P", true, false);
             System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
 
         }

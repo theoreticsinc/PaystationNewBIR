@@ -471,10 +471,10 @@ public class LoginMOD extends javax.swing.JPanel {
 
                 terminalnum = "Terminal N0:   " + terminalnum;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysale = "Today's Net Sales     : " + todaysale_dbl;
-                String todaysGross = "Today's Gross       : " + todaysGross_dbl;
-                String vatablesale = "VAT Sales          : " + vatablesale_dbl;
-                String vat12 = "12% VAT Sales      : " + vat12_dbl;
+                String todaysale   = "Net Sales           : " + todaysale_dbl;
+                String todaysGross = "Gross Sales         : " + todaysGross_dbl;
+                String vatablesale = "VATables Sales      : " + vatablesale_dbl;
+                String vat12       = "VAT Amount (12%)    : " + vat12_dbl;
                 String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
                 String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
@@ -564,10 +564,10 @@ public class LoginMOD extends javax.swing.JPanel {
                 terminalnum = "Terminal N0:   " + terminalnum;
 //                datetimeOut = "Date:          " + datetimeOut;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysale   = "Today's Net Sales   : " + todaysale_dbl;
-                String todaysGross = "Today's Gross       : " + todaysGross_dbl;
-                String vatablesale = "VAT Sales           : " + vatablesale_dbl;
-                String vat12 = "12% VAT Sales       : " + vat12_dbl;
+                String todaysale       = "Net Sales           : " + todaysale_dbl;
+                String todaysGross     = "Gross Sales         : " + todaysGross_dbl;
+                String vatablesale     = "VATable Sales       : " + vatablesale_dbl;
+                String vat12           = "VAT Amount (12%)    : " + vat12_dbl;
                 String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
                 String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
@@ -654,12 +654,13 @@ public class LoginMOD extends javax.swing.JPanel {
                 //String tellerCode = rs.getString("tellerCode");
                 //String logINID = rs.getString("logINID");
 
-                terminalnum = "            R E P R I N T\n" + "Terminal N0:   " + terminalnum;
-                datetimeOut1 = "Date:          " + datetimeOut;
-                String todaysale = "Todays Sale         : " + todaysale_dbl;
-                String todaysGross = "Today's Gross       : " + todaysGross_dbl;
-                String vatablesale = "VAT Sale            : " + vatablesale_dbl;
-                String vat12 = "12% VAT Sale        : " + vat12_dbl;
+                //terminalnum = "        R E P R I N T\n" + "Terminal N0:   " + terminalnum;
+                terminalnum = "Terminal N0:   " + terminalnum;
+                datetimeOut1 = "Date:          " + datetimeOut.substring(0, 16);
+                String todaysale =   "Net Sales           : " + todaysale_dbl;
+                String todaysGross = "Gross Sales         : " + todaysGross_dbl;
+                String vatablesale = "VATable Sales       : " + vatablesale_dbl;
+                String vat12 =       "VAT Amount (12%)    : " + vat12_dbl;
                 String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
                 String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
@@ -676,7 +677,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 endZCount = "Z-Count(end)       : " + endZCount;
 //                String rCount = "Reset Count        : " + resetCount;
 
-                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- ZReading ---", terminalnum, datetimeOut1, todaysale, todaysGross, vatablesale, vat12, vatExemptedSales, zeroRatedSales, discounts, beginOR, endOR, beginTrans, endTrans, oldGrand, "New Grand Total    : " + newGrand, oldGrossTotal, "New Gross Total    : " + newGrossTotal, ZCount);
+                sendZRead2USBEpsonPrinter(i, Exitpoint, "--- CURRENT ZREADING ---", terminalnum, datetimeOut1, todaysale, todaysGross, vatablesale, vat12, vatExemptedSales, zeroRatedSales, discounts, beginOR, endOR, beginTrans, endTrans, oldGrand, "New Grand Total    : " + newGrand, ZCount, oldGrossTotal, "New Gross Total    : " + newGrossTotal);
 
                 if ((i % 2) == 0) {
                     delay(2000);
@@ -739,7 +740,8 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.setRed();
             eh.printHEADER(Exitpoint);
             eh.printline("");
-            eh.printline("  R E P R I N T");
+            //eh.printline("  R E P R I N T");
+            eh.Justify((byte) 0);
             eh.printline("--- X READING ---");
             eh.printline("--Log Out Collection--");
 
@@ -929,7 +931,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 eh.printline("VATable Sales      :  " + getAmountDue(Float.parseFloat(vatsaleAmount)));
                 eh.printline("VAT Amount (12%)   :  " + getAmountDue(Float.parseFloat(vat12Amount)));
                 eh.printline("VAT Exempt Sales   :  " + getAmountDue(Float.parseFloat(vatExemptedSalesAmount)));
-                eh.printline("Zero-Rated Sales   :  P  0.00"  );
+                eh.printline("Zero-Rated Sales   :  0.00"  );
                 eh.printline("Discount Count     :  " + discountCount);
                 eh.printline("Discount Amount    :  " + getAmountDue(Float.parseFloat(discountAmount)));
                 eh.printline("");
@@ -975,9 +977,9 @@ public class LoginMOD extends javax.swing.JPanel {
 
                 eh.startPrinter();
                 eh.printline("");
-                eh.printline("Teller Sign :__________________________");
+//                eh.printline("Teller Sign :__________________________");
                 eh.feedpaperup((byte) 2);
-                eh.printline("Supervisor  :__________________________");
+//                eh.printline("Supervisor  :__________________________");
                 eh.feedpaperup((byte) 3);
                 eh.startPrinter();
                 eh.fullcut();

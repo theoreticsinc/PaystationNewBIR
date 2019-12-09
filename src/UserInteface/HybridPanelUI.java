@@ -72,7 +72,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     //public String entryIPCamera = "192.168.100.220";
     public String entryIPCamera = "192.168.1.64";
     //public String exitIPCamera = "192.168.100.219";    
-    public String exitIPCamera = "192.168.1.64";
+    public String exitIPCamera = "192.168.1.23";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -6479,7 +6479,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 try {
 
                     //dbh.insertImageFromURLToDB();
-                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "user1234");
+                    //BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "user1234");
+                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "123456");
                     if (null != buf) {
                         //entryCamera.setIcon(new ImageIcon(buf));       
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

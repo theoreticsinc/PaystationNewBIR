@@ -326,7 +326,10 @@ public class DataBaseHandler extends Thread {
             //HIKVISION DVR
             //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //HIKVISION IP Cameras
-            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
+//            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
+            //GWSecurity IP Cameras
+//          URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif/device_service");
+          URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/cgi-bin/snapshot.cgi?stream=0");
             
             //HttpURLConnection yc = (HttpURLConnection) url.openConnection();
             //yc.setRequestProperty("Authorization", "Basic " + encoded);
