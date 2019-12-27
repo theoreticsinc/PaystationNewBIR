@@ -1079,8 +1079,10 @@ public class ParkersAPI {
 //                    vat12 = 0;
                     eh.printline("TOTAL AMOUNT DUE           :  P" + displayAmount2Decimals(AmountDue));
                     eh.printline("=======================================");
-                    eh.printline("VATable Sales              :  P" + displayAmount2Decimals(NetOfDiscount));
-                    eh.printline("VAT Amount (12%)           :  P" + displayAmount2Decimals(NetOfDiscount * 0.12f));
+                    eh.printline("VATable Sales              :  P" + displayAmount2Decimals(AmountGross / 1.12f));
+                    eh.printline("VAT Amount (12%)           :  P" + displayAmount2Decimals(vat12));
+//                    eh.printline("VATable Sales              :  P" + displayAmount2Decimals(NetOfDiscount));
+//                    eh.printline("VAT Amount (12%)           :  P" + displayAmount2Decimals(NetOfDiscount * 0.12f));
                     eh.printline("VAT Exempt Sales           :  P" + displayAmount2Decimals(vatExemptedSales));
                     eh.printline("Zero-Rated Sales           :  P0.00");
                 } else {

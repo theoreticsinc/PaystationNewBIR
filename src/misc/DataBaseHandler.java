@@ -523,6 +523,63 @@ public class DataBaseHandler extends Thread {
         return img;
     }
     
+    public BufferedImage Get2ndImageFromDB(String cardNumber) {
+        BufferedImage img = null;
+        try {
+            connection = getConnection(true);
+            //String sql = "SELECT CardCode, Plate, PIC FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'";
+            String sql = "SELECT cardNumber, plateNumber, PIC2 FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+
+            img = new BufferedImage(400, 400,
+                    BufferedImage.TYPE_BYTE_INDEXED);
+
+            while (resultSet.next()) {
+                String name = resultSet.getString(1);
+                String description = resultSet.getString(2);
+                //File image = new File("C:\\card" + name + ".jpg");
+                //FileOutputStream fos = new FileOutputStream(image);
+
+                byte[] buffer = new byte[1];
+                InputStream is = resultSet.getBinaryStream(3);
+                //while (is.read(buffer) > 0) {
+                //    fos.write(buffer);
+                //}
+                //is.close();
+
+                //InputStream in = new FileInputStream("C:\\card" + name + ".jpg");
+                try {
+                    img = ImageIO.read(is);
+                    is.close();
+                } catch (Exception ex) {
+                    
+                }
+                
+                //fos.close();
+                //show(name, img, 7);
+            }
+
+            //Kernel kernel = new Kernel(3, 3, new float[] { -1, -1, -1, -1, 9, -1, -1,
+            //    -1, -1 });
+            //BufferedImageOp op = new ConvolveOp(kernel);
+            //img = op.filter(img, null);
+//        JFrame frame = new JFrame();
+//        frame.getContentPane().setLayout(new FlowLayout());
+//        frame.getContentPane().add(new JLabel(new ImageIcon(img)));
+//        frame.pack();
+//        frame.setVisible(true);
+            //mediaPlayer.controls().stop();
+            //show("Captured", img, 7);
+            return img;
+            
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return img;
+    }
+    
+    
     public BufferedImage GetImageFromEXTCRDDB(String CardCode) {
         BufferedImage img = null;
         try {

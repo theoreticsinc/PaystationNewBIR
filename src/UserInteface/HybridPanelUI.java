@@ -151,7 +151,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String loginID;
     public String serverIP, key;
     public String BackupMainServer, printer, printerType, slotsmode, SlotsResetEnabled, sResetTime;
-    public String payuponentry, exitType;
+    public String payuponentry, exitType, numOfEntryCams;
     public boolean slotscompute = false;
     public Date busyStamp = new Date();
     public Date SavedStamp = new Date();
@@ -298,6 +298,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             serverIP = xr.getElementValue("C://JTerminals/initH.xml", "server_ip");
             slotsmode = xr.getElementValue("C://JTerminals/initH.xml", "slotsmode");
             payuponentry = xr.getElementValue("C://JTerminals/initH.xml", "payuponentry");
+            numOfEntryCams = xr.getElementValue("C://JTerminals/initH.xml", "numOfEntryCams");
             String scompute = xr.getElementValue("C://JTerminals/initH.xml", "slotscompute");
             EncryptionTool et = new EncryptionTool();
             rootpasswd = et.decrypt(xr.getElementValue("C://JTerminals/commandX.xml", "pwd"), "itheoretics");
@@ -7309,7 +7310,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private javax.swing.JLabel errorMsg7;
     private javax.swing.JLabel errorMsg8;
     private javax.swing.JPanel errorPanels;
-    private javax.swing.JLabel exitCamera;
+    public javax.swing.JLabel exitCamera;
     private javax.swing.JButton exitTicket;
     private javax.swing.JPanel fullKeyBoard;
     private javax.swing.JLabel fullScreenCamera;
