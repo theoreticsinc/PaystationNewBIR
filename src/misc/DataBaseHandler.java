@@ -44,6 +44,7 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -79,10 +80,10 @@ public class DataBaseHandler extends Thread {
     private String BackupMainServer_URL = "jdbc:mysql://localhost/";
     private String SubServer_URL = "jdbc:mysql://localhost/";
     private String BackupSubServer_URL = "jdbc:mysql://localhost/";
-    //private String USERNAME = "base";
-    //private String PASSWORD = "theoreticsinc";
-    private String USERNAME = "root";
-    private String PASSWORD = "sa";
+    private String USERNAME = "base";
+    private String PASSWORD = "theoreticsinc";
+//    private String USERNAME = "root";
+//    private String PASSWORD = "sa";
     public String EX_SentinelID;
     private Connection connection = null;
     private Connection backupConnection = null;
@@ -466,7 +467,8 @@ public class DataBaseHandler extends Thread {
             java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
-
+    
+    
     public BufferedImage GetImageFromDB(String cardNumber) {
         BufferedImage img = null;
         try {
@@ -523,6 +525,7 @@ public class DataBaseHandler extends Thread {
         return img;
     }
     
+
     public BufferedImage Get2ndImageFromDB(String cardNumber) {
         BufferedImage img = null;
         try {
@@ -579,12 +582,39 @@ public class DataBaseHandler extends Thread {
         return img;
     }
     
-    
     public BufferedImage GetImageFromEXTCRDDB(String CardCode) {
         BufferedImage img = null;
         try {
             connection = getConnection(true);
             String sql = "SELECT PIC FROM extcrd.main WHERE cardNumber = '" + CardCode + "'";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            ResultSet resultSet = stmt.executeQuery();
+
+            img = new BufferedImage(400, 400,
+                    BufferedImage.TYPE_BYTE_INDEXED);
+
+            while (resultSet.next()) {
+                InputStream is = resultSet.getBinaryStream(1);
+                try {
+                    img = ImageIO.read(is);
+                    is.close();
+                } catch (Exception ex) {
+                    
+                }
+            }
+            return img;
+            
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(DataBaseHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        return img;
+    }
+    
+    public BufferedImage Get2ndImageFromEXTCRDDB(String CardCode) {
+        BufferedImage img = null;
+        try {
+            connection = getConnection(true);
+            String sql = "SELECT PIC2 FROM extcrd.main WHERE cardNumber = '" + CardCode + "'";
             PreparedStatement stmt = connection.prepareStatement(sql);
             ResultSet resultSet = stmt.executeQuery();
 
@@ -877,6 +907,18 @@ public class DataBaseHandler extends Thread {
         st.close();
         connection.close();
         found = findExitCard(cardNumber);
+        return !found;
+    }
+
+    public boolean sendEntryCard2Server4Deletion(String cardNumber) throws SQLException {
+        boolean found = false;
+        connection = getConnection(true);
+        st = (Statement) connection.createStatement();
+        //st.execute("DELETE FROM unidb.timeindb WHERE CardCode = '" + cardNumber + "'");
+        st.execute("INSERT INTO fordeletion.crdplt SELECT * FROM crdplt.main WHERE cardNumber = '" + cardNumber + "'");
+        st.close();
+        connection.close();
+        found = findEntranceCard(cardNumber);
         return !found;
     }
 
@@ -1757,7 +1799,7 @@ public class DataBaseHandler extends Thread {
         } catch (ClassNotFoundException ex) {
             log.error(ex.getMessage());
         }
-        DriverManager.setLoginTimeout(3);
+        DriverManager.setLoginTimeout(30000);
         //Connection connection=null;
         if (mainorder == true) {
             try {
@@ -1779,6 +1821,61 @@ public class DataBaseHandler extends Thread {
                         USERNAME, PASSWORD);
                 return (connection);
             }
+        }
+    }
+
+    
+    public Connection getLocalConnection(boolean mainorder)
+            throws SQLException {
+        try {
+            Class.forName(DRIVER_CLASS_NAME);
+        } catch (ClassNotFoundException ex) {
+            log.error(ex.getMessage());
+        }
+        DriverManager.setLoginTimeout(3000);
+        //Connection connection=null;
+        if (mainorder == true) {
+            try {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            } catch (Exception ex) {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            }
+        } else {
+            try {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            } catch (Exception ex) {
+                connection = DriverManager.getConnection("jdbc:mysql://localhost/",
+                        USERNAME, PASSWORD);
+                return (connection);
+            }
+        }
+    }
+
+    
+    public Connection getRemoteConnection(String address)
+            throws SQLException {
+        try {
+            Class.forName(DRIVER_CLASS_NAME);
+        } catch (ClassNotFoundException ex) {
+            System.err.println(ex.getMessage());
+        }
+        DriverManager.setLoginTimeout(3000);
+        //Connection connection=null;
+        try {
+            Connection newConnection = DriverManager.getConnection("jdbc:mysql://" + address + "/carpark?autoReconnect=true&serverTimezone=UTC&useSSL=False&allowPublicKeyRetrieval=true",
+                    USERNAME, PASSWORD);
+            return (newConnection);
+        } catch (Exception ex) {
+            System.err.println(address + " Cannot Connect");
+            Connection newConnection = DriverManager.getConnection("jdbc:mysql://" + address + "/carpark?autoReconnect=true&serverTimezone=UTC&useSSL=False&allowPublicKeyRetrieval=true",
+                    USERNAME, PASSWORD);
+            return (newConnection);
         }
     }
 
@@ -1860,7 +1957,7 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public boolean writeExit(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, double amountPaid, BufferedImage buf, boolean isLost) {
+    public boolean writeExit(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, double amountPaid, BufferedImage buf1, BufferedImage buf2, boolean isLost) {
         try {
             
             DateConversionHandler dch = new DateConversionHandler();
@@ -1868,9 +1965,12 @@ public class DataBaseHandler extends Thread {
             long DatePaidStamp = dch.convertJavaDate2UnixTime4Card(DatePaid);
             long NextDueStamp = dch.convertJavaDate2UnixTime4Card(NextDue);
             
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(buf, "jpg", os);
-            InputStream is = new ByteArrayInputStream(os.toByteArray());
+            ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+            ImageIO.write(buf1, "jpg", os1);
+            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+            ImageIO.write(buf2, "jpg2", os2);
+            InputStream is1 = new ByteArrayInputStream(os1.toByteArray());
+            InputStream is2 = new ByteArrayInputStream(os2.toByteArray());
 //            connection = getConnection(true);
 //            st = (Statement) connection.createStatement();
             connection = getConnection(true);
@@ -1883,8 +1983,8 @@ public class DataBaseHandler extends Thread {
             
             String SQL = "INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, "
                     + "datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, "
-                    + "amountPaid, PIC) "
-                    + "VALUES ('P1', 'EN01', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "amountPaid, PIC, PIC2) "
+                    + "VALUES ('P1', 'EN01', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             statement = connection.prepareStatement(SQL);
             statement.setString(1, CardNumber);
             statement.setString(2, PlateCheck);
@@ -1897,13 +1997,73 @@ public class DataBaseHandler extends Thread {
             statement.setString(9, NextDue);
             statement.setLong(10, NextDueStamp);
             statement.setDouble(11, amountPaid);
-            statement.setBinaryStream(12, (InputStream) is, (int) (os.size()));
+            statement.setBinaryStream(12, (InputStream) is1, (int) (os1.size()));
+            statement.setBinaryStream(13, (InputStream) is2, (int) (os2.size()));
             statement.executeUpdate();
             //st.execute();
             statement.close();
             connection.close();
-            is.close();
-            os.close();
+            is1.close();
+            os1.close();
+            is2.close();
+            os2.close();
+            return true;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean writeExit4Duplication(String CardNumber, String PlateCheck, String DateIN, String DatePaid, String NextDue, String trtype, double amountPaid, BufferedImage buf1, BufferedImage buf2, boolean isLost) {
+        try {
+            
+            DateConversionHandler dch = new DateConversionHandler();
+            long DateINStamp = dch.convertJavaDate2UnixTime4Card(DateIN);
+            long DatePaidStamp = dch.convertJavaDate2UnixTime4Card(DatePaid);
+            long NextDueStamp = dch.convertJavaDate2UnixTime4Card(NextDue);
+            
+            ByteArrayOutputStream os1 = new ByteArrayOutputStream();
+            ImageIO.write(buf1, "jpg", os1);
+            ByteArrayOutputStream os2 = new ByteArrayOutputStream();
+            ImageIO.write(buf2, "jpg2", os2);
+            InputStream is1 = new ByteArrayInputStream(os1.toByteArray());
+            InputStream is2 = new ByteArrayInputStream(os2.toByteArray());
+//            connection = getConnection(true);
+//            st = (Statement) connection.createStatement();
+            connection = getConnection(true);
+            PreparedStatement statement;
+            //st.execute("INSERT INTO extcrd.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, 
+                     //datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, 
+                     //amountPaid)
+                     //VALUES ('P1', 'EN01', '" + CardNumber + "', '" + PlateCheck + "', '" + trtype + "', false, 
+                     //'" + DateIN + "', '" + DateINStamp + "', '" + DatePaid + "', '" + DatePaidStamp + "', '" + NextDue + "', '" + NextDueStamp + "', " + amountPaid + ")");
+            
+            String SQL = "INSERT INTO forduplication.extcrd (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, "
+                    + "datetimeIN, datetimeINStamp, datetimePaid, datetimePaidStamp, datetimeNextDue, datetimeNextDueStamp, "
+                    + "amountPaid, PIC, PIC2) "
+                    + "VALUES ('P1', 'EN01', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            statement = connection.prepareStatement(SQL);
+            statement.setString(1, CardNumber);
+            statement.setString(2, PlateCheck);
+            statement.setString(3, trtype);
+            statement.setBoolean(4, isLost);
+            statement.setString(5, DateIN);
+            statement.setLong(6, DateINStamp);
+            statement.setString(7, DatePaid);
+            statement.setLong(8, DatePaidStamp);            
+            statement.setString(9, NextDue);
+            statement.setLong(10, NextDueStamp);
+            statement.setDouble(11, amountPaid);
+            statement.setBinaryStream(12, (InputStream) is1, (int) (os1.size()));
+            statement.setBinaryStream(13, (InputStream) is2, (int) (os2.size()));
+            statement.executeUpdate();
+            //st.execute();
+            statement.close();
+            connection.close();
+            is1.close();
+            os1.close();
+            is2.close();
+            os2.close();
             return true;
         } catch (Exception ex) {
             log.error(ex.getMessage());
@@ -3233,4 +3393,316 @@ public class DataBaseHandler extends Thread {
             log.error(ex.getMessage());
         }
     }
+    
+    ///////////////////////////Server Copy to POS///////////////////////////
+    public List<String> getClientsIP(String tablename) throws SQLException {
+        List<String> ipaddresses = new ArrayList<>();
+        connection = getConnection(true);
+        st = (Statement) connection.createStatement();
+        String sql = "SELECT * FROM "+tablename+".listofip";
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            ipaddresses.add(rs.getString("ipaddress"));
+        }
+        st.close();
+        connection.close();
+        return ipaddresses;
+    }
+
+    public List<String> getCards(String databasename) throws SQLException {
+        List<String> ipaddresses = new ArrayList<>();
+        connection = getConnection(true);
+        st = (Statement) connection.createStatement();
+        String sql = "SELECT * FROM "+databasename+".main";
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            ipaddresses.add(rs.getString("ipaddress"));
+        }
+        st.close();
+        connection.close();
+        return ipaddresses;
+    }
+
+    public String getLastKnown(String tablename, String ipaddress) throws SQLException {
+        String dateOfLastKnown = null;
+        connection = getConnection(true);
+        st = (Statement) connection.createStatement();
+        String sql = "SELECT date FROM " + tablename + ".lastknown WHERE ipaddress = '" + ipaddress + "'";
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            dateOfLastKnown = rs.getString("date");
+        }
+        st.close();
+        connection.close();
+        return dateOfLastKnown;
+    }
+
+    public boolean setLastKnown(String tablename, String ipaddress, String lastDate) throws SQLException {
+//        connection = getConnection(true);
+        Statement st = (Statement) connection.createStatement();
+        String sql = "UPDATE " + tablename + ".lastknown SET date = '" + lastDate + "' WHERE ipaddress = '" + ipaddress + "'";
+        boolean result = st.execute(sql);
+        st.close();
+//        connection.close();
+        return result;
+    }
+
+    public ResultSet getLatestCards(String databasename, String tablename, String date_lk) throws SQLException {
+        ResultSet rs = null;
+        Statement st = (Statement) connection.createStatement();
+        String sql = "SELECT * FROM "+databasename+"."+tablename+" WHERE datetimeIN > '" + date_lk + "' ORDER BY datetimeIN ASC";
+        rs = st.executeQuery(sql);
+        return rs;
+    }
+
+    public void copyCardsPOS2ServerNPOS(String srcdb, String srctbl, String destdb, String desttbl, String type, String date_lk, String POSaddress) throws SQLException {
+        BufferedImage[] img = new BufferedImage[15];
+        connection = getConnection(true);
+        String insertSQL = "";
+        ResultSet rs = getLatestCards(srcdb, srctbl, date_lk);
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columnNumber = rsmd.getColumnCount();
+        while (rs.next()) {
+            int x = 1;
+            Connection posConnection = null;
+            try {
+                posConnection = getRemoteConnection(POSaddress);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (null != posConnection) {
+//            boolean res = remoteST.execute(insertSQL);
+                insertSQL = "INSERT INTO "+destdb+"."+desttbl+" (";
+                while (x <= columnNumber) {
+                    insertSQL = insertSQL + rsmd.getColumnName(x);
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + ", ";
+                    }
+                    x++;
+                }
+                insertSQL = insertSQL + ") VALUES (";
+                x = 1;
+                while (x <= columnNumber) {
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + "?, ";
+                    } else {
+                        insertSQL = insertSQL + "?)";
+                    }
+                    x++;
+                }
+                System.out.println("INSERT SQL: " + insertSQL);
+                PreparedStatement remotePST = (PreparedStatement) posConnection.prepareStatement(insertSQL);
+                x = 1;
+                while (x <= columnNumber) {
+                    int dataType = rsmd.getColumnType(x);
+                    if (dataType == 12) {
+                        String cardNumber = rs.getString(rsmd.getColumnName(x));
+                        remotePST.setString(x, rs.getString(rsmd.getColumnName(x)));
+                        System.out.print(cardNumber + " ");
+                    } else if (dataType == -6) {
+                        int cardNo = rs.getInt(rsmd.getColumnName(x));
+                        remotePST.setInt(x, rs.getInt(rsmd.getColumnName(x)));
+                        System.out.print(cardNo + " ");
+                    } else if (dataType == 93) {
+                        Timestamp dt = rs.getTimestamp(rsmd.getColumnName(x));
+                        remotePST.setTimestamp(x, rs.getTimestamp(rsmd.getColumnName(x)));
+                        System.out.print(dt + " ");
+                    } else if (dataType == -7) {
+                        boolean isLost = rs.getBoolean(rsmd.getColumnName(x));
+                        remotePST.setBoolean(x, rs.getBoolean(rsmd.getColumnName(x)));
+                        System.out.print(isLost + " ");
+                    } else if (dataType == 7) {
+                        float amount = rs.getFloat(rsmd.getColumnName(x));
+                        remotePST.setFloat(x, rs.getFloat(rsmd.getColumnName(x)));
+                        System.out.print(amount + " ");
+                    } else if (dataType == -4) {
+                        remotePST.setBlob(x, rs.getBlob(rsmd.getColumnName(x)));
+//                    InputStream is = rs.getBinaryStream(rsmd.getColumnName(x));
+//                    try {
+//                        if (null != is) {
+//                            img[x] = ImageIO.read(is);
+//                            show(x + "", img[x], x);
+//                        }
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(DataBaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+                    } else {
+                        System.out.print(" dataType:[" + dataType + "] = ");
+                    }
+
+                    x++;
+                }
+                try {
+                    remotePST.executeUpdate();
+                    this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+                    System.out.println("\n" + rs.getString("cardNumber") + " Copied Successfully");
+                } catch (Exception ex) {
+                    try {
+                        Statement remoteST = (Statement) posConnection.createStatement();
+                        ////////////REMOTE DELETE//////////////////////
+                        String delSQL = "DELETE FROM "+destdb+".main WHERE cardNumber = '" + rs.getString("cardNumber") + "'";
+                        ////////////REMOTE DELETE//////////////////////
+                        remoteST.execute(delSQL);
+                        remotePST.executeUpdate();
+                        this.setLastKnown(type, POSaddress, rs.getString("datetimeIN"));
+                        System.out.println("\n" + rs.getString("cardNumber") + " Overwritten Successfully");
+                    } catch (Exception ex2) {
+                        Statement saveST = (Statement) connection.createStatement();
+                        String insSQL = "INSERT INTO " + type + ".failed (cardNumber, ipaddress, sentinelID) VALUES ('" + rs.getString("cardNumber") + "', '" + POSaddress + "', '')";
+                        saveST.execute(insSQL);
+                        saveST.close();
+                        ex2.printStackTrace();
+                    }
+                }
+                System.out.println("");
+                remotePST.close();
+                posConnection.close();
+            }
+        }
+
+        st.close();
+        connection.close();
+    }
+    
+    public ResultSet getFailedCards(String tablename, String ipaddress) throws SQLException {
+        Statement st = (Statement) connection.createStatement();
+        String sql = "SELECT * FROM " + tablename + ".failed WHERE ipaddress = '" + ipaddress + "'";
+        ResultSet rs = st.executeQuery(sql); 
+        return rs;
+    }
+    
+    public HashMap<String, String> getFailedCardsMap(String tableName, String ipaddress) throws SQLException {
+        HashMap<String, String> ipaddresses = new HashMap<String, String>();
+        connection = getConnection(true);
+        st = (Statement) connection.createStatement();
+        String sql = "SELECT * FROM " + tableName + ".failed WHERE ipaddress = '" + ipaddress + "'";
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            ipaddresses.put(rs.getString("ipaddress"), rs.getString("cardNumber"));
+        }
+        st.close();
+        connection.close();
+        return ipaddresses;
+    }
+    
+    public ResultSet getCard(String databasename, String tablename, String cardNumber) throws SQLException {
+        ResultSet rs = null;
+        Statement st = (Statement) connection.createStatement();
+        String sql = "SELECT * FROM "+databasename+"."+tablename+" WHERE cardNumber = '" + cardNumber + "' ORDER BY datetimeIN ASC";
+        rs = st.executeQuery(sql);
+        return rs;
+    }
+    
+    public void copyFailedCardsPOS2ServerNPOS(String srcdb, String srctbl, String destdb, String desttbl, String type, String date_lk, String POSaddress) throws SQLException {
+        BufferedImage[] img = new BufferedImage[15];
+        connection = getConnection(true);
+        String insertSQL = "";
+        ResultSet rs1 = getFailedCards(type, POSaddress);        
+        while (rs1.next()) {
+            int x = 1;
+            Connection posConnection = null;
+            ResultSet rs2 = getCard(srcdb, srctbl, rs1.getString("cardNumber"));
+            ResultSetMetaData rsmd = rs2.getMetaData();
+            int columnNumber = rsmd.getColumnCount();
+            try {
+                posConnection = getRemoteConnection(POSaddress);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (null != posConnection) {
+//            boolean res = remoteST.execute(insertSQL);
+                insertSQL = "INSERT INTO "+destdb+"."+desttbl+" (";
+                while (x <= columnNumber) {
+                    insertSQL = insertSQL + rsmd.getColumnName(x);
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + ", ";
+                    }
+                    x++;
+                }
+                insertSQL = insertSQL + ") VALUES (";
+                x = 1;
+                while (x <= columnNumber) {
+                    if (x != columnNumber) {
+                        insertSQL = insertSQL + "?, ";
+                    } else {
+                        insertSQL = insertSQL + "?)";
+                    }
+                    x++;
+                }
+                System.out.println("INSERT SQL: " + insertSQL);
+                PreparedStatement remotePST = (PreparedStatement) posConnection.prepareStatement(insertSQL);
+                x = 1;
+                rs2.first();
+                while (x <= columnNumber) {
+                    int dataType = rsmd.getColumnType(x);
+                    if (dataType == 12) {
+                        String cardNumber = rs2.getString(rsmd.getColumnName(x));
+                        remotePST.setString(x, rs2.getString(rsmd.getColumnName(x)));
+                        System.out.print(cardNumber + " ");
+                    } else if (dataType == -6) {
+                        int cardNo = rs2.getInt(rsmd.getColumnName(x));
+                        remotePST.setInt(x, rs2.getInt(rsmd.getColumnName(x)));
+                        System.out.print(cardNo + " ");
+                    } else if (dataType == 93) {
+                        Timestamp dt = rs2.getTimestamp(rsmd.getColumnName(x));
+                        remotePST.setTimestamp(x, rs2.getTimestamp(rsmd.getColumnName(x)));
+                        System.out.print(dt + " ");
+                    } else if (dataType == -7) {
+                        boolean isLost = rs2.getBoolean(rsmd.getColumnName(x));
+                        remotePST.setBoolean(x, rs2.getBoolean(rsmd.getColumnName(x)));
+                        System.out.print(isLost + " ");
+                    } else if (dataType == 7) {
+                        float amount = rs2.getFloat(rsmd.getColumnName(x));
+                        remotePST.setFloat(x, rs2.getFloat(rsmd.getColumnName(x)));
+                        System.out.print(amount + " ");
+                    } else if (dataType == -4) {
+                        remotePST.setBlob(x, rs2.getBlob(rsmd.getColumnName(x)));
+//                    InputStream is = rs.getBinaryStream(rsmd.getColumnName(x));
+//                    try {
+//                        if (null != is) {
+//                            img[x] = ImageIO.read(is);
+//                            show(x + "", img[x], x);
+//                        }
+//                    } catch (Exception ex) {
+//                        Logger.getLogger(DataBaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+                    } else {
+                        System.out.print(" dataType:[" + dataType + "] = ");
+                    }
+
+                    x++;
+                }
+                try {
+                    remotePST.executeUpdate();
+                    System.out.println("\n Failed " + rs2.getString("cardNumber") + " Copied Successfully");
+                    Statement localST = (Statement) connection.createStatement();
+                    String delSQL = "DELETE FROM "+type+".failed WHERE cardNumber = '" + rs2.getString("cardNumber") + "' WHERE ipaddress = '" + POSaddress + "'";
+                    localST.execute(delSQL);
+                } catch (Exception ex) {
+                    try {
+                        Statement remoteST = (Statement) posConnection.createStatement();
+                        ////////////REMOTE DELETE//////////////////////
+                        String delSQL = "DELETE FROM "+destdb+"."+desttbl+" WHERE cardNumber = '" + rs2.getString("cardNumber") + "'";
+                        ////////////REMOTE DELETE//////////////////////
+                        remoteST.execute(delSQL);
+                        remotePST.executeUpdate();
+                        this.setLastKnown(type, POSaddress, rs2.getString("datetimeIN"));
+                        System.out.println("\n Failed " + rs2.getString("cardNumber") + " Overwritten Successfully");
+                        Statement localST = (Statement) connection.createStatement();
+                        String del2SQL = "DELETE FROM "+type+".failed WHERE cardNumber = '" + rs2.getString("cardNumber") + "' WHERE ipaddress = '" + POSaddress + "'";
+                        localST.execute(del2SQL);
+                    } catch (Exception ex2) {
+                        ex2.printStackTrace();
+                    }
+                }
+                System.out.println("");
+                remotePST.close();
+                posConnection.close();
+            }
+        }
+
+        st.close();
+        connection.close();
+    }
+
 }

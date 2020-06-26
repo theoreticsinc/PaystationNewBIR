@@ -1,3 +1,4 @@
+
 /*
  * Angelo Dizon
  * Update to Linux kernel version 2.6.23.17
@@ -44,6 +45,8 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import javax.smartcardio.Card;
@@ -70,9 +73,9 @@ import modules.SystemStatus;
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
     //public String entryIPCamera = "192.168.100.220";
-    public String entryIPCamera = "192.168.1.64";
+    public String entryIPCamera = "192.168.2.64";
     //public String exitIPCamera = "192.168.100.219";    
-    public String exitIPCamera = "192.168.1.23";
+    public String exitIPCamera = "192.168.2.68";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -6625,11 +6628,12 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         public void run() {
             try {
                 while (true) {
-                    Thread.sleep(10000);
-                    ServerDataHandler sdh = new ServerDataHandler();
+                    Thread.sleep(1000);
+//                    ServerDataHandler sdh = new ServerDataHandler();
                     SystemStatus ss = new SystemStatus();
-                    DataBaseHandler DBH = new DataBaseHandler();
+//                    DataBaseHandler DBH = new DataBaseHandler();
                     //online = ss.checkPING(BackupMainServer);
+//                    processCRDPLTonServer();
                     if (ss.checkPING(BackupMainServer) == true) {
                         //sdh.UpdateLOGIN();
                         //sdh.UpdateMPP();
@@ -6637,12 +6641,48 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //                        DBH.copyExitTransfromLocal("carpark.exit_trans", "carpark.exit_trans");
 //                        DBH.copyColltrainfromLocal("colltrain.main", "colltrain.main");
 //                        DBH.copyZReadfromLocal("zread.main", "zread.main");
+                        
                     }
                     Thread.sleep(10000);
+                    
                 }
             } catch (Exception ex) {
                 log.error(ex.getMessage());
             }
+        }
+    }
+    
+    private void processCRDPLTonServer() {
+        DataBaseHandler DBH = new DataBaseHandler();
+        try {
+            SystemStatus ss = new SystemStatus();
+            List<String> clients = DBH.getClientsIP("forduplication");
+
+            Iterator<String> iterator = clients.iterator();
+            while (iterator.hasNext()) {
+                String ip = iterator.next();
+//                System.out.println(ip);
+                String date_lk = DBH.getLastKnown("forduplication", ip);
+//                System.out.println(date_lk);
+                if (ss.checkPING(ip)) {
+                    System.out.println(ip + " is Online");
+                    if (null != date_lk) {
+                        try {
+                            //DBH.copyCardsPOS2ServerNPOS("crdplt", "forduplication", date_lk, ip, clients);
+                            DBH.copyCardsPOS2ServerNPOS("extcrd", "main", "extcrd", "main", "forduplication", date_lk, ip);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        try {
+                            DBH.copyFailedCardsPOS2ServerNPOS("extcrd", "main", "extcrd", "main", "forduplication", date_lk, ip);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

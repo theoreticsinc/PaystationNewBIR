@@ -254,25 +254,47 @@ public class ParkersAPI {
         return found;
     }
 
-    public boolean writeExitCRD2DB(boolean scanEXTCRD, String card2check, String PlateCheck, String datetimeIN, String datetimePaid, String datetimeNextDue, String trtype, double amountPaid, boolean isLost) {
+    public boolean writeExitCRD2DB(boolean scanEXTCRD, String card2check, String PlateCheck, String datetimeIN, String datetimePaid, String datetimeNextDue, String trtype, double amountPaid, boolean isLost, boolean forDuplication) {
         boolean written = false;
         try {
             DataBaseHandler dbh = new DataBaseHandler();            
-            BufferedImage buf;
+            BufferedImage buf1;
             if (scanEXTCRD) {
-                buf = dbh.GetImageFromEXTCRDDB(card2check);
+                buf1 = dbh.GetImageFromEXTCRDDB(card2check);
             } else {
-                buf = dbh.GetImageFromDB(card2check);
+                buf1 = dbh.GetImageFromDB(card2check);
+            }
+            
+            BufferedImage buf2;
+            if (scanEXTCRD) {
+                buf2 = dbh.Get2ndImageFromEXTCRDDB(card2check);
+            } else {
+                buf2 = dbh.Get2ndImageFromDB(card2check);
             }
             dbh.eraseExitCard(card2check);            
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-            written = dbh.writeExit(card2check, PlateCheck, datetimeIN, datetimePaid, datetimeNextDue, trtype, amountPaid, buf, isLost);
+            written = dbh.writeExit(card2check, PlateCheck, datetimeIN, datetimePaid, datetimeNextDue, trtype, amountPaid, buf1, buf2, isLost);
 
+            if (forDuplication) {
+                dbh.writeExit4Duplication(card2check, PlateCheck, datetimeIN, datetimePaid, datetimeNextDue, trtype, amountPaid, buf1, buf2, isLost);
+            }
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
         return written;
+    }
+    
+    public boolean duplicateCRDPLT(String card2check) {
+        boolean found = false;
+        try {
+            DataBaseHandler dbh = new DataBaseHandler();
+            found = dbh.findEntranceCard(card2check);
+
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+        return found;
     }
 
     public boolean eraseCRDPLTFromDB(String card2check) {
@@ -292,6 +314,18 @@ public class ParkersAPI {
         try {
             DataBaseHandler dbh = new DataBaseHandler();
             found = dbh.eraseExitCard(card2check);
+
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+        return found;
+    }
+    
+    public boolean sendCRDPLT2Server(String card2check) {
+        boolean found = false;
+        try {
+            DataBaseHandler dbh = new DataBaseHandler();
+            found = dbh.sendEntryCard2Server4Deletion(card2check);
 
         } catch (Exception ex) {
             log.error(ex.getMessage());

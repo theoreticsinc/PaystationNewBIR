@@ -691,8 +691,9 @@ public class ComputeAPI {
                 n = sdf.format(dch.convertJavaUnixTime2Date4DB(nextDueTimeStamp));
             }
             if (stn.exitType.compareTo("unmanned") == 0) {
-                SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, trtypeHolder, AmountDue + AmountPaid, isLost);
+                SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, trtypeHolder, AmountDue + AmountPaid, isLost, true);
             }
+            SP.sendCRDPLT2Server(CardCheck);            
             SP.eraseCRDPLTFromDB(CardCheck);            
             try {
                 if (datamode.compareToIgnoreCase("cards") == 0) {

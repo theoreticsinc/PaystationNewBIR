@@ -177,7 +177,7 @@ public class USBEpsonHandler {
             }
             //this.printline("Exit ID: " + SentinelID);
             //this.Justify((byte) 0);
-            this.startPrinter();
+//            this.startPrinter();
             //bos.write(13);
             //bos.close();
 
