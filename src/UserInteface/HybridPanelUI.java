@@ -6628,17 +6628,21 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         public void run() {
             try {
                 while (true) {
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
 //                    ServerDataHandler sdh = new ServerDataHandler();
                     SystemStatus ss = new SystemStatus();
-//                    DataBaseHandler DBH = new DataBaseHandler();
+                    DataBaseHandler DBH = new DataBaseHandler();
                     //online = ss.checkPING(BackupMainServer);
 //                    processCRDPLTonServer();
                     if (ss.checkPING(BackupMainServer) == true) {
                         //sdh.UpdateLOGIN();
-                        //sdh.UpdateMPP();
+                        //sdh.UOnlineUpdaterpdateMPP();
 //                        DBH.copyCRDPLTfromServer("crdplt.main", "crdplt.main");
-//                        DBH.copyExitTransfromLocal("carpark.exit_trans", "carpark.exit_trans");
+                        //DBH.copyExitTransfromLocal("carpark.exit_trans", "carpark.exit_trans");
+                        DBH.copyTransToServerfromLocal("carpark", "exit_trans", "carpark", "exit_trans", "DateTimeOUT");
+                        DBH.copyTransToServerfromLocal("colltrain", "main", "colltrain", "main", "logoutStamp");
+                        DBH.copyTransToServerfromLocal("zread", "main", "zread", "main", "datetimeOut");
+                        
 //                        DBH.copyColltrainfromLocal("colltrain.main", "colltrain.main");
 //                        DBH.copyZReadfromLocal("zread.main", "zread.main");
                         

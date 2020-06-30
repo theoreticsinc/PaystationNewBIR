@@ -212,7 +212,7 @@ public class ParkerDataHandler {
 //                ex.printStackTrace();
             }
 
-            conn = DB.getConnection(true);
+            conn = DB.getServerConnection(true);
             //WITH CAMERA TO DATABASE
             //int status2 = stmt.executeUpdate("INSERT INTO crdplt.main (areaID, entranceID, cardNumber, plateNumber, trtype, isLost, datetimeIN, datetimeINStamp) "
             //        + "VALUES ('" + AreaID + "', '" + entranceID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '0', '" + DateTimeIN + "','" + timeStampIN.toString() + "')");
@@ -284,7 +284,7 @@ public class ParkerDataHandler {
         return false;
     }
 
-    public boolean saveEXParkerTrans2DB(String serverIP, String SentinelID, String TransactionNum, String Entrypoint, String ReceiptNo, String CashierID, String CashierName, String Card, String Plate, String TRType, String DateTimeIN, String DateTimeOUT, String NetOfDiscount, String AmountGross, String AmountPaid, long HoursElapsed, long MinutesElapsed, String settlementRef, String settlementName, String settlementAddr, String settlementTIN, String settlementBusStyle, double VAT12, double VATSALE, double vatExemptedSales, String discount, Double tenderFloat, String changeDue) {
+    public boolean saveEXParkerTrans2DB(String serverIP, String SentinelID, String TransactionNum, String Entrypoint, String ReceiptNo, String CashierID, String CashierName, String Card, String Plate, String TRType, String DateTimeIN, String DateTimeOUT, String NetOfDiscount, String AmountGross, String AmountPaid, long HoursElapsed, long MinutesElapsed, String settlementRef, String settlementName, String settlementAddr, String settlementTIN, String settlementBusStyle, double VATADJ, double VAT12, double VATSALE, double vatExemptedSales, double discount, Double tenderFloat, String changeDue) {
 //001000000000234,11111111,SERVCE,E01,000001,GELO01,V,0542,04142008,0543,04142008,B,O,C,0
 //RECEIPT NO     ,ID      ,Name  ,SW1,CARD  ,PLT   ,T,Time,DATEIN  ,TOut,DATEOUT , , , ,AMOUNT 
         //SW03157842GELO47R1207072478203 <<-.crd .plt
@@ -305,20 +305,20 @@ public class ParkerDataHandler {
                 changeDue = "0";
             }
             String SQLA = "insert into carpark.exit_trans "
-                    + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + NetOfDiscount + "', '" + AmountPaid + "', '" + AmountGross + "', '"+ discount + "', '" + VAT12 + "', '" + VATSALE + "', '" + vatExemptedSales + "', '"  + tenderFloat + "', '"  + changeDue + "', " + DateTimeIN + "" + ", '" + DateTimeOUT + "', " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
+                    + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + NetOfDiscount + "', '" + AmountPaid + "', '" + AmountGross + "', '"+ discount + "', '" + VATADJ + "', '" + VAT12 + "', '" + VATSALE + "', '" + vatExemptedSales + "', '"  + tenderFloat + "', '"  + changeDue + "', " + DateTimeIN + "" + ", '" + DateTimeOUT + "', " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             //INSERT INTO `incomereport` (`ID`, `TRno`, `Cardcode`, `Plate`, `Operator`, `PC`, `Timein`, `TimeOut`, `BusnessDate`, `Total`, `Vat`, `NonVat`, `VatExemp`, `TYPE`, `Tender`, `Change`, `Regular`, `Overnight`, `Lostcard`, `Payment`, `DiscountType`, `DiscountAmount`, `DiscountReference`, `Cash`, `Credit`, `CreditCardid`, `CreditCardType`, `VoucherAmount`, `GPRef`, `GPDiscount`, `GPoint`, `CompliType`, `Compli`, `CompliRef`, `PrepaidType`, `Prepaid`, `PrepaidRef`) VALUES (NULL, '2-38932', 'ABC23456', 'ABC123', 'cindy', 'POS-2', '2019-07-18 06:29:00', '2019-07-18 12:43:00', '2019-07-18', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
             //String SQL = "INSERT INTO unidb.incomereport (`ID`, `TRno`, `Cardcode`, `Plate`, `Operator`, `PC`, `Timein`, `TimeOut`, `BusnessDate`, `Total`, `Vat`, `NonVat`, `VatExemp`, `TYPE`, `Tender`, `Change`, `Regular`, `Overnight`, `Lostcard`, `Payment`, `DiscountType`, `DiscountAmount`, `DiscountReference`, `Cash`, `Credit`, `CreditCardid`, `CreditCardType`, `VoucherAmount`, `GPRef`, `GPDiscount`, `GPoint`, `CompliType`, `Compli`, `CompliRef`, `PrepaidType`, `Prepaid`, `PrepaidRef`) "
             //       + "VALUES (NULL, '" + ReceiptNo + "', '" + Card + "', '" + Plate + "', '" + CashierID + "', 'POS-2', " + DateTimeIN + ", '" + DateTimeOUT + "', CURRENT_DATE, '" + AmountGross + "', '" + VAT12 + "', '" + VATSALE + "', '" + vatExemptedSales + "', 'REGULAR', '" + tenderFloat + "', '" + changeDue + "', '" + AmountGross + "', '0', '0', 'Regular', '-', " + discount + ", '-', '" + AmountPaid + "', '0', NULL, NULL, '0', NULL, '0', '0', NULL, '0', NULL, NULL, '0', NULL)";
 
             //        + "values(null, 0, null, '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {
-                conn = DB.getConnection(true);
+                conn = DB.getLocalConnection(true);
                 stmt = conn.createStatement();
                 //int status2 = stmt.executeUpdate(SQL);
                 int status3 = stmt.executeUpdate(SQLA);
                 return true;
             } catch (Exception ex) {
-                conn = DB.getConnection(false);
+                conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
                 log.info("Print Error in : " + SQLA);
                 //int status2 = stmt.executeUpdate(SQL);
@@ -360,12 +360,12 @@ public class ParkerDataHandler {
             String SQL = "insert into carpark.void_trans "
                     + "values(null, 1, LPAD('" + VOIDrefNumber + "',12,0), '" + ReceiptNo + "', '" + CashierID + "', '" + Entrypoint + "', '" + SentinelID + "', '" + Card + "', '" + Plate + "', '" + TRType + "', '" + Amount + "', " + DateTimeIN + "" + ", CURRENT_TIMESTAMP, " + HoursElapsed + ", " + MinutesElapsed + ", '" + settlementRef + "', '" + settlementName + "', '" + settlementAddr + "', '" + settlementTIN + "', '" + settlementBusStyle + "' )";
             try {
-                conn = DB.getConnection(true);
+                conn = DB.getLocalConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
             } catch (Exception ex) {
-                conn = DB.getConnection(false);
+                conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
                 log.info("Print Error in : " + SQL);
                 int status2 = stmt.executeUpdate(SQL);
@@ -385,12 +385,12 @@ public class ParkerDataHandler {
             String SQL = "UPDATE carpark.exit_trans "
                     + "SET void = 1, voidRefID = LPAD('" + VOIDrefNumber + "',12,0) WHERE ReceiptNumber = '" + ReceiptNo + "';";
             try {
-                conn = DB.getConnection(true);
+                conn = DB.getLocalConnection(true);
                 stmt = conn.createStatement();
                 int status2 = stmt.executeUpdate(SQL);
                 return true;
             } catch (Exception ex) {
-                conn = DB.getConnection(false);
+                conn = DB.getLocalConnection(false);
                 stmt = conn.createStatement();
                 log.info("Print Error in : " + SQL);
                 int status2 = stmt.executeUpdate(SQL);

@@ -643,12 +643,14 @@ public class ComputeAPI {
         double vatsale = getNonVat(AmountDue);
         String discount = "0.00";
         double discountDbl = 0;
+        double vatAdjustment = 0;
         double vatExemptedSales = 0;
         //AmountGross = AmountDue;
         if (isDiscounted) {
             discountPercentage = pa.getdiscountPercentage(ParkerType);
-            discountDbl = getdDiscountFromVat(AmountGross, discountPercentage);
-            
+            //discountDbl = getdDiscountFromVat(AmountGross, discountPercentage);
+            discountDbl = getDiscount(AmountGross, discountPercentage);
+            vatAdjustment = getVatAdjustment(AmountGross, discountPercentage);
 //            vat12 = 0;
 //            vatsale = 0;
             Double vT = getNonVat(AmountGross);
@@ -829,7 +831,7 @@ public class ComputeAPI {
             stn.trtype = "L";
             ParkerType = "L";
         }
-        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(NetOfDiscount), String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
+        boolean saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, datetimeOUT, String.valueOf(NetOfDiscount), String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vatAdjustment, vat12, vatsale, vatExemptedSales, discountDbl, tenderFloat, stn.ChangeDisplay.getText());
         if (saveParkerTrans == false) {    //save twice just in case
             //saveParkerTrans = PDH.saveEXParkerTrans2DB(stn.serverIP, stn.EX_SentinelID, transactionNum, Entrypoint, RNos, stn.CashierID, stn.CashierName, Cardno, Plateno, ParkerType, datetimeIN, String.valueOf(AmountGross), String.valueOf(AmountDue), HoursElapsed, MinutesElapsed, stn.settlementRef, stn.settlementName, stn.settlementAddr, stn.settlementTIN, stn.settlementBusStyle, vat12, vatsale, vatExemptedSales, discount, tenderFloat, stn.ChangeDisplay.getText());
         }
@@ -908,6 +910,27 @@ public class ComputeAPI {
         //return df2.format(vatSales);
         return vatSales;
     }
+    
+    private double getVatAdjustment(double AmountDue, float discountPercentage) {
+        if (AmountDue == 0) {
+            return 0D;
+        }
+        //float vatSales = (float) (AmountDue * .12);
+        double adj = (double) AmountDue * (discountPercentage / 100) - ((AmountDue * (discountPercentage / 100)) / 1.12);
+        //return df2.format(vatSales);
+        return adj;
+    }
+    
+    private double getDiscount(double AmountDue, float discountPercentage) {
+        if (AmountDue == 0) {
+            return 0D;
+        }
+        //float vatSales = (float) (AmountDue * .12);
+        double discount = (double) (AmountDue * (discountPercentage / 100)) / 1.12;
+        //return df2.format(vatSales);
+        return discount;
+    }
+
     
     private double getdDiscountFromVat(double AmountDue, float discountPercentage) {
         if (AmountDue == 0) {
