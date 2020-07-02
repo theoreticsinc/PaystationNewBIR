@@ -98,11 +98,11 @@ public class ComputeAPI {
     private Long timeStampPaid;
     private Long nextDueTimeStamp = 0L;
     private boolean roundoff2;
-    private boolean printerCutter;    
+    private boolean printerCutter;
     private String printerType;
     private String datamode;
     private String exitType;
-    
+
     public ParkersAPI SP;
 
     public ComputeAPI(HybridPanelUI sui) {
@@ -163,16 +163,16 @@ public class ComputeAPI {
                     dataFromCard = true;
                 } else if (datamode.compareToIgnoreCase("db") == 0) {
                     //if (firstscan) {
-                        stn.SavedStamp = NowStamp;
-                        sets = SP.retrieveCRDPLTFromDB(CardCheck, stn.serverIP, true);
-                        stn.scanEXTCRD = false;
+                    stn.SavedStamp = NowStamp;
+                    sets = SP.retrieveCRDPLTFromDB(CardCheck, stn.serverIP, true);
+                    stn.scanEXTCRD = false;
                     //} else {
                     if (sets == false) {
                         NowStamp = stn.SavedStamp;
                         //sets = SP.retrieveCRDPLTFromDB(CardCheck, stn.serverIP, true);
                         sets = SP.retrieveEXTCRDFromDB(CardCheck, stn.serverIP, true);
                         if (sets) {
-                            stn.scanEXTCRD = true;                            
+                            stn.scanEXTCRD = true;
                         }
                     }
                     dataFromCard = false;
@@ -345,7 +345,7 @@ public class ComputeAPI {
                     IFR = true;
                 } else if (stn.MotorOverride == true) {
                     ParkerType = "M";
-                } else if (stn.QCSeniorOverride == true) {
+                } else if (stn.LocalSeniorOverride == true) {
                     ParkerType = "Q";
                 } else if (stn.BPOCarOverride == true) {
                     ParkerType = "BC";
@@ -459,7 +459,7 @@ public class ComputeAPI {
                 }
             }
             trtypeHolder = stn.trtype;
-            if (isLost) {                
+            if (isLost) {
                 stn.trtype = "L";
                 ParkerType = "L";
             }
@@ -575,10 +575,10 @@ public class ComputeAPI {
             DecimalFormat df2 = new DecimalFormat("#.00");
             stn.AMOUNTdisplay.setText("P " + String.valueOf(df2.format(AmountDue)));
             stn.npd.PlateNo.setText("P " + String.valueOf(AmountDue) + "0");
-            if (AmountDue <= 0) {   
+            if (AmountDue <= 0) {
                 stn.AMOUNTdisplay.setText("P 0.00");
                 stn.npd.PlateNo.setText("P 0.00");
-            }            
+            }
             stn.PlateInput2.setText(Plateno);
             stn.Plateinput.delete(0, stn.Plateinput.length());
             stn.Plateinput.append(Plateno);
@@ -663,23 +663,31 @@ public class ComputeAPI {
             NetOfDiscount = (vT - discountDbl);
             AmountDue = NetOfDiscount + (NetOfDiscount * .12);
             stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
-            updateOneTransFiles("vat12", vat12);
-            updateOneTransFiles("vatsale", vatsale);   
-            updateOneTransFiles("gross", AmountGross);   
-            updateOneTransFiles("discount", discountDbl);
-            updateOneTransFiles("exemptedVat12", 0);         
-            updateOneTransFiles("vatExemptedSales", 0);            
-        }
-            if (roundoff2) {
-                vat12 = Math.round(vat12 * 100.0) / 100.0;
-                vatsale = Math.round(vatsale * 100.0) / 100.0;
-                AmountDue = Math.round(AmountDue * 100.0) / 100.0;
-                AmountGross = Math.round(AmountGross * 100.0) / 100.0;
+            updateOneTransFiles("exemptedVat12", 0);
+            updateOneTransFiles("vatExemptedSales", 0);
+            if (ParkerType.compareToIgnoreCase("PW") == 0) {
+                updateOneTransFiles("pwdDiscount", discountDbl);
+                updateOneTransFiles("vatAdjPWD", vatAdjustment);
+            } else if (ParkerType.compareToIgnoreCase("S") == 0) {
+                updateOneTransFiles("seniorDiscount", discountDbl);
+                updateOneTransFiles("vatAdjSenior", vatAdjustment);
+            } else if (ParkerType.compareToIgnoreCase("LS") == 0) {
+                updateOneTransFiles("localSeniorDiscount", discountDbl);
+                updateOneTransFiles("vatAdjLocalSenior", vatAdjustment);
+            } else {
+//                updateOneTransFiles("discountAmount", vatAdjustment);
             }
-            discount = df2.format(discountDbl);
-            updateOneTransFiles("vat12", vat12);
-            updateOneTransFiles("vatsale", vatsale);   
-            updateOneTransFiles("gross", AmountGross);   
+        }
+        if (roundoff2) {
+            vat12 = Math.round(vat12 * 100.0) / 100.0;
+            vatsale = Math.round(vatsale * 100.0) / 100.0;
+            AmountDue = Math.round(AmountDue * 100.0) / 100.0;
+            AmountGross = Math.round(AmountGross * 100.0) / 100.0;
+        }
+        discount = df2.format(discountDbl);
+        updateOneTransFiles("vat12", vat12);
+        updateOneTransFiles("vatsale", vatsale);
+        updateOneTransFiles("gross", AmountGross);
         if (sets == true) {
             ParkerType = stn.trtype;
             DateConversionHandler dch = new DateConversionHandler();
@@ -695,8 +703,8 @@ public class ComputeAPI {
             if (stn.exitType.compareTo("unmanned") == 0) {
                 SP.writeExitCRD2DB(stn.scanEXTCRD, CardCheck, Plateno, d, p, n, trtypeHolder, AmountDue + AmountPaid, isLost, true);
             }
-            SP.sendCRDPLT2Server(CardCheck);            
-            SP.eraseCRDPLTFromDB(CardCheck);            
+//            SP.sendCRDPLT2Server(CardCheck);            
+            SP.eraseCRDPLTFromDB(CardCheck);
             try {
                 if (datamode.compareToIgnoreCase("cards") == 0) {
                     if (mifare != null) {
@@ -709,19 +717,19 @@ public class ComputeAPI {
             if (exitType.compareToIgnoreCase("manned") == 0) {
                 SP.eraseEXTCRDFromDB(CardCheck);
             }
-            
+
             if (isLost) {
                 ParkerType = "L";
                 stn.trtype = "L";
             }
-            
+
             try {
                 if (roundoff2) {
                     AmountDue = Math.round(AmountDue * 100.0) / 100.0;
                 }
-                if (updateAllTransFiles() == false)//Update Parker Type Data Column
-                {
-                }
+//                if (updateAllTransFiles() == false)//Update Parker Type Data Column
+//                {
+//                }
                 if (updateTrans2DB() == false) {//Updates Car Served and Total Amount
                 }
 
@@ -743,6 +751,7 @@ public class ComputeAPI {
                 } catch (Exception x) {
 
                 }
+                stn.CardInput2.setText("PRINTING.");
                 if (duplicateReceiptType == 0) {
                     /*
                     if (printerType.compareToIgnoreCase("serial") == 0) {
@@ -816,18 +825,18 @@ public class ComputeAPI {
         //String vat12 = getVat(AmountDue);
         //String nonvat = getNonVat(AmountDue);
         tenderFloat = 0f;
-            try {
-                if (stn.AmtTendered.getText().trim().compareToIgnoreCase("") != 0) {
-                    tenderFloat = Float.parseFloat(stn.AmtTendered.getText());
-                } else {
-                    tenderFloat = AmountDue;
-                }
+        try {
+            if (stn.AmtTendered.getText().trim().compareToIgnoreCase("") != 0) {
+                tenderFloat = Float.parseFloat(stn.AmtTendered.getText());
+            } else {
+                tenderFloat = AmountDue;
+            }
 
-            } catch (Exception x) {
+        } catch (Exception x) {
 
-            }            
+        }
         ParkerType = trtypeHolder;
-        if(isLost) {
+        if (isLost) {
             stn.trtype = "L";
             ParkerType = "L";
         }
@@ -898,7 +907,7 @@ public class ComputeAPI {
         //return df2.format(vatSales);
         return vatSales;
     }
-    
+
     private double getAddVat(double AmountDue) {
         if (AmountDue == 0) {
             return 0;
@@ -910,7 +919,7 @@ public class ComputeAPI {
         //return df2.format(vatSales);
         return vatSales;
     }
-    
+
     private double getVatAdjustment(double AmountDue, float discountPercentage) {
         if (AmountDue == 0) {
             return 0D;
@@ -920,7 +929,7 @@ public class ComputeAPI {
         //return df2.format(vatSales);
         return adj;
     }
-    
+
     private double getDiscount(double AmountDue, float discountPercentage) {
         if (AmountDue == 0) {
             return 0D;
@@ -931,7 +940,6 @@ public class ComputeAPI {
         return discount;
     }
 
-    
     private double getdDiscountFromVat(double AmountDue, float discountPercentage) {
         if (AmountDue == 0) {
             return 0D;
@@ -943,7 +951,6 @@ public class ComputeAPI {
         //return df2.format(vatSales);
         return vatSales;
     }
-
 
     private String getDiscountFromVat(double AmountDue, float discountPercentage) {
         if (AmountDue == 0) {
@@ -2036,7 +2043,7 @@ public class ComputeAPI {
             return false;
         }
     }
-    
+
     private boolean updateOneTransFiles(String fieldName, double Amount) {//Local files
         try {
             SaveCollData scd = new SaveCollData();
@@ -2378,15 +2385,14 @@ public class ComputeAPI {
 
         //i++; //Add 1 to check the next hour because the current hour is already paid 
         //and FractionThereOf takes the next Hour instead of the last
-
         //FractionThereOf
         //Must Add the HRplus
         if (FractionThereOf || MinutesElapsed > 0) {
             if (HRplusWaived1st[i] == false) {
                 if (HRplus[i].trim().substring(0, 1).compareToIgnoreCase("+") == 0) {
-                    if (i == 3) { 
+                    if (i == 3) {
                         AmountComputed = AmountComputed + Float.parseFloat(HRplus[i].trim().substring(1));
-                    } else if (i >= 4) { 
+                    } else if (i >= 4) {
                         AmountComputed = AmountComputed + Float.parseFloat(HR[i].trim().substring(1));
                     }
                 } else if (HRplus[i].trim().substring(0, 1).compareToIgnoreCase("-") == 0) {
@@ -2523,7 +2529,7 @@ public class ComputeAPI {
         }
         return lastHrwidNonZero;
     }
-    
+
     private Image getScaledImage(Image srcImg, int w, int h) {
         BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = resizedImg.createGraphics();
@@ -2538,47 +2544,47 @@ public class ComputeAPI {
     public static void main(String args[]) {
         HybridPanelUI stn = new HybridPanelUI();
         ParkersAPI SP = new ParkersAPI();
-        
-                SP.setSysID("EN01");
-                SP.setCardID("A82A94B1");
-                SP.setPlateID("AA28934");
-                SP.setTRID("R");
-                SP.setAmountPaid("");
-                
+
+        SP.setSysID("EN01");
+        SP.setCardID("A82A94B1");
+        SP.setPlateID("AA28934");
+        SP.setTRID("R");
+        SP.setAmountPaid("");
+
         ComputeAPI ca = new ComputeAPI(null);
         ca.SP = SP;
         ca.stn = stn;
         DateConversionHandler dch = new DateConversionHandler();
         dch.convertJavaDate2UnixTime(new Date());
         ca.dateTimeINstamp = new Date().getTime() + "";
-        
+
         Float computed = 0f;
-        
+
         /////GRACE PERIOD
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 0;
         computed = ca.Computation("P", true, false);
-        System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
+        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 19;
         computed = ca.Computation("P", true, false);
-        System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
+        System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
         /////
-        
+
         for (int i = 1; i <= 48; i++) {
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 0;
             computed = ca.Computation("P", true, false);
-            System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
+            System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 1;
             computed = ca.Computation("P", true, false);
-            System.out.println("       "+ ca.HoursElapsed  + "Hours : "+ ca.MinutesElapsed  + "Min :== * Amount is: " + computed);
+            System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
         }
-        
+
         System.exit(0);
     }
 }

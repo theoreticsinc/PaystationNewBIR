@@ -44,17 +44,7 @@ public class LoginMOD extends javax.swing.JPanel {
     private RawFileHandler rfh = new RawFileHandler();
     private String login_id;
 
-    static Logger log = LogManager.getLogger(LoginMOD.class.getName());
-
-    public boolean isReadable() throws Exception {
-        XMLreader xr = new XMLreader();
-        String ID = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
-        String Name = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
-        if ((Name.compareTo("") != 0) && (ID.compareTo("") != 0)) {
-            return true;
-        }
-        return false;
-    }
+    static Logger log = LogManager.getLogger(LoginMOD.class.getName());  
 
     public boolean saveLogintoFile(Date logStamp, String logID, String logcode, String logname) throws FileNotFoundException, IOException {
 //        Writer writer = null;
@@ -75,6 +65,12 @@ public class LoginMOD extends javax.swing.JPanel {
                 + "<validation>\n<key></key>\n</validation>\n</log>";
         RawFileHandler rfh = new RawFileHandler();
         rfh.putfile("C://JTerminals/", "ginH.xml", out);
+        return false;
+    }
+
+    public boolean saveLogintoDB(Date logStamp, String logID, String logcode, String logname) {
+        DataBaseHandler dbh = new DataBaseHandler();
+        dbh.setCashierLoginID(logStamp.getTime() + "", logID, logcode, logname);
         return false;
     }
 
@@ -123,9 +119,10 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     public String getCashierID() throws Exception {
-        XMLreader xr = new XMLreader();
-        String CID = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
+        DataBaseHandler dbh = new DataBaseHandler();
+        String CID = dbh.getCashierID();
         return CID;
+        
     }
 
     public boolean getCashierPassword(String logCode, String password) throws Exception {
@@ -135,8 +132,8 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     public String getCashierName() throws Exception {
-        XMLreader xr = new XMLreader();
-        String CN = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+        DataBaseHandler dbh = new DataBaseHandler();
+        String CN = dbh.getCashierName();
         CN = CN.replaceAll(" ", "");
         return CN;
     }
@@ -147,8 +144,8 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     private void sendColl2USBPrinter(int i, String Exitpoint, String CName, String LoginDate, String LoginTime, String Loosechange, String LogoutDate, String LogoutTime,
-            String RegularParkers, String MotorcycleParkers, String QCSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
-            String InvalidFlatRateParkers, String DeliveryParkers, String NonQCSeniorParkers, String BPOMotorParkers, String CarServed, String ReceiptServed) {
+            String RegularParkers, String MotorcycleParkers, String LocalSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
+            String InvalidFlatRateParkers, String DeliveryParkers, String NonLocalSeniorParkers, String BPOMotorParkers, String CarServed, String ReceiptServed) {
 
         try {
             StringBuilder str = new StringBuilder();
@@ -177,7 +174,7 @@ public class LoginMOD extends javax.swing.JPanel {
             str.append("\"                   Count  Amount\" CR LF\n");
             str.append("\"" + RegularParkers + "\" CR LF\n");
             str.append("\"" + MotorcycleParkers + "\" CR LF\n");
-            str.append("\"" + QCSeniorParkers + "\" CR LF\n");
+            str.append("\"" + LocalSeniorParkers + "\" CR LF\n");
             str.append("\"" + GraceParkers + "\" CR LF\n");
             str.append("\"" + DeliveryParkers + "\" CR LF\n");
             str.append("\"" + VIPParkers + "\" CR LF\n");
@@ -185,7 +182,7 @@ public class LoginMOD extends javax.swing.JPanel {
             str.append("\"" + LCEPParkers + "\" CR LF\n");
             str.append("\"" + InvalidFlatRateParkers + "\" CR LF\n");
             str.append("\"" + DeliveryParkers + "\" CR LF\n");
-            str.append("\"" + NonQCSeniorParkers + "\" CR LF\n");
+            str.append("\"" + NonLocalSeniorParkers + "\" CR LF\n");
             str.append("\"" + BPOMotorParkers + "\" CR LF\n");
 
             str.append("\"" + CarServed + "\" CR LF\n");
@@ -261,8 +258,8 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     private void sendColl2USBEpsonPrinter(int i, String Exitpoint, String CName, String LoginDate, String LoginTime, String Loosechange, String LogoutDate, String LogoutTime,
-            String RegularParkers, String MotorcycleParkers, String QCSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
-            String InvalidFlatRateParkers, String DeliveryParkers, String NonQCSeniorParkers, String CarServed, String ReceiptServed) {
+            String RegularParkers, String MotorcycleParkers, String LocalSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
+            String InvalidFlatRateParkers, String DeliveryParkers, String NonLocalSeniorParkers, String CarServed, String ReceiptServed) {
 
         try {
             XMLreader xr = new XMLreader();
@@ -295,10 +292,10 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.printline(RegularParkers);
             eh.printline(MotorcycleParkers);
             eh.printline(GraceParkers);
-            eh.printline(QCSeniorParkers);
+            eh.printline(LocalSeniorParkers);
             eh.printline(DeliveryParkers);
             eh.printline(VIPParkers);
-            eh.printline(NonQCSeniorParkers);
+            eh.printline(NonLocalSeniorParkers);
             eh.printline(LOSTParkers);
             eh.printline(LCEPParkers);
             eh.printline(InvalidFlatRateParkers);
@@ -317,8 +314,8 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     private void sendColl2EpsonPrinter(int i, String Exitpoint, String CName, String LoginDate, String LoginTime, String Loosechange, String LogoutDate, String LogoutTime,
-            String RegularParkers, String MotorcycleParkers, String QCSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
-            String InvalidFlatRateParkers, String DeliveryParkers, String NonQCSeniorParkers, String BPOMotorParkers, String CarServed, String ReceiptServed) {
+            String RegularParkers, String MotorcycleParkers, String LocalSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
+            String InvalidFlatRateParkers, String DeliveryParkers, String NonLocalSeniorParkers, String BPOMotorParkers, String CarServed, String ReceiptServed) {
 
         try {
             XMLreader xr = new XMLreader();
@@ -351,7 +348,7 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.printline(RegularParkers);
             eh.printline(MotorcycleParkers);
             eh.printline(GraceParkers);
-            eh.printline(QCSeniorParkers);
+            eh.printline(LocalSeniorParkers);
             eh.printline(DeliveryParkers);
             eh.printline(VIPParkers);
             eh.printline(LOSTParkers);
@@ -373,7 +370,7 @@ public class LoginMOD extends javax.swing.JPanel {
     }
 
     private void oldsendColl2EpsonPrinter(int i, String Exitpoint, String CName, String LoginDate, String LoginTime, String Loosechange, String LogoutDate, String LogoutTime,
-            String RegularParkers, String MotorcycleParkers, String QCSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
+            String RegularParkers, String MotorcycleParkers, String LocalSeniorParkers, String GraceParkers, String VIPParkers, String LOSTParkers, String LCEPParkers,
             String InvalidFlatRateParkers, String PromoParkers, String CarServed, String ReceiptServed) {
         try {
             USBEpsonHandler eh = new USBEpsonHandler();
@@ -402,7 +399,7 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.printline(RegularParkers);
             eh.printline(MotorcycleParkers);
             eh.printline(GraceParkers);
-            eh.printline(QCSeniorParkers);
+            eh.printline(LocalSeniorParkers);
             eh.printline("Delivery Parkers   : 0");
             eh.printline(VIPParkers);
             eh.printline("OCLP Parkers       : 0");
@@ -427,10 +424,11 @@ public class LoginMOD extends javax.swing.JPanel {
         String accumulatedGrossTotal = "";
         try {
             XMLreader xr = new XMLreader();
-            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            DataBaseHandler dbh = new DataBaseHandler();
+            login_id = dbh.getLogID();
+            //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             String resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
             SaveCollData scd = new SaveCollData();
-            DataBaseHandler dbh = new DataBaseHandler();
 
             Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
             Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
@@ -520,11 +518,12 @@ public class LoginMOD extends javax.swing.JPanel {
         String accumulatedGrossTotal = "";
         try {
             XMLreader xr = new XMLreader();
-            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            DataBaseHandler dbh = new DataBaseHandler();
+            login_id = dbh.getLogID();
+            //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             String resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
             SaveCollData scd = new SaveCollData();
-            DataBaseHandler dbh = new DataBaseHandler();
-
+            
             Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
             Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
             //Double Sale12Vat = (double) totalCollected * 0.12;
@@ -1022,9 +1021,9 @@ public class LoginMOD extends javax.swing.JPanel {
                         if (CollData.length() >= 81) {
                             MotorcycleParkers = formatBack(CollData.substring(71, 81));
                         }
-                        String QCSeniorParkers = "0";
+                        String LocalSeniorParkers = "0";
                         if (CollData.length() >= 91) {
-                            QCSeniorParkers = formatBack(CollData.substring(81, 91));
+                            LocalSeniorParkers = formatBack(CollData.substring(81, 91));
                         }
                         String GraceParkers = "0";
                         if (CollData.length() >= 101) {
@@ -1050,9 +1049,9 @@ public class LoginMOD extends javax.swing.JPanel {
                         if (CollData.length() >= 151) {
                             DeliveryParkers = formatBack(CollData.substring(141, 151));
                         }
-                        String NonQCSeniorParkers = "0";
+                        String NonLocalSeniorParkers = "0";
                         if (CollData.length() >= 161) {
-                            NonQCSeniorParkers = formatBack(CollData.substring(151, 161));
+                            NonLocalSeniorParkers = formatBack(CollData.substring(151, 161));
                         }
                         String BPOMotorParkers = "0";
                         if (CollData.length() >= 171) {
@@ -1086,9 +1085,9 @@ public class LoginMOD extends javax.swing.JPanel {
                         if (CollData.length() >= 241) {
                             DeliveryAmount = formatBack(CollData.substring(231, 241));
                         }
-                        String NonQCSeniorAmount = "0";
+                        String NonLocalSeniorAmount = "0";
                         if (CollData.length() >= 251) {
-                            NonQCSeniorAmount = formatBack(CollData.substring(241, 251));
+                            NonLocalSeniorAmount = formatBack(CollData.substring(241, 251));
                         }
                         String BPOMotorAmount = "0";
                         if (CollData.length() >= 261) {
@@ -1105,7 +1104,7 @@ public class LoginMOD extends javax.swing.JPanel {
                         //delay(1000);
                         RegularParkers = "Private Parkers    : " + RegularParkers + "    " + RegularAmount;
                         MotorcycleParkers = "Motorcycle Parkers : " + MotorcycleParkers + "    " + MotorAmount;
-                        QCSeniorParkers = "QC Senior Parkers  : " + QCSeniorParkers + "    " + QCAmount;
+                        LocalSeniorParkers = "QC Senior Parkers  : " + LocalSeniorParkers + "    " + QCAmount;
                         GraceParkers = "Grace Parkers      : " + GraceParkers + "    " + 0;
                         VIPParkers = "VIP Parkers        : " + VIPParkers + "    " + 0;
 //                eh.printline("OCLP Parkers       : 0");
@@ -1113,7 +1112,7 @@ public class LoginMOD extends javax.swing.JPanel {
                         LCEPParkers = "LCEP Parkers       : " + LCEPParkers + "    " + 0;
                         InvalidFlatRateParkers = "Invalid Cards      : " + InvalidFlatRateParkers + "    " + 0;
                         DeliveryParkers = "Delivery Parkers   : " + DeliveryParkers + "    " + DeliveryAmount;
-                        NonQCSeniorParkers = "BPO Car Parker     : " + NonQCSeniorParkers + "    " + NonQCSeniorAmount;
+                        NonLocalSeniorParkers = "BPO Car Parker     : " + NonLocalSeniorParkers + "    " + NonLocalSeniorAmount;
                         BPOMotorParkers = "BPO Motor Parker   : " + BPOMotorParkers + "    " + BPOMotorAmount;
 
                         CarServed = "Total Cars Served  : " + CarServed;
@@ -1122,8 +1121,8 @@ public class LoginMOD extends javax.swing.JPanel {
 
                         ReceiptServed = "Total Collection   : " + ReceiptServed;
 
-                        sendColl2EpsonPrinter(i, Exitpoint, CName, LoginDate, LoginTime, Loosechange, LogoutDate, LogoutTime, RegularParkers, MotorcycleParkers, QCSeniorParkers, GraceParkers, VIPParkers, LOSTParkers, LCEPParkers,
-                                InvalidFlatRateParkers, DeliveryParkers, NonQCSeniorParkers, BPOMotorParkers, CarServed, ReceiptServed);
+                        sendColl2EpsonPrinter(i, Exitpoint, CName, LoginDate, LoginTime, Loosechange, LogoutDate, LogoutTime, RegularParkers, MotorcycleParkers, LocalSeniorParkers, GraceParkers, VIPParkers, LOSTParkers, LCEPParkers,
+                                InvalidFlatRateParkers, DeliveryParkers, NonLocalSeniorParkers, BPOMotorParkers, CarServed, ReceiptServed);
                         if ((i % 2) == 0) {
                             delay(2000);
                         }
@@ -1167,11 +1166,18 @@ public class LoginMOD extends javax.swing.JPanel {
             DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT);
 
             XMLreader xr = new XMLreader();
-            String logintime = xr.getElementValue("C://JTerminals/ginH.xml", "logindate");
-            String cashiercode = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
-            String cashiername = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+            DataBaseHandler dbh = new DataBaseHandler();
+            login_id = dbh.getLogID();
+//            String logintime = xr.getElementValue("C://JTerminals/ginH.xml", "logindate");
+//            String cashiercode = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
+//            String cashiername = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+            String logintime = dbh.getLoginDate();
+            String cashiercode = dbh.getCashierID();
+            String cashiername = dbh.getCashierName();
+            
             cashiername = cashiername.replaceAll(" ", "");
-            String loosechange = xr.getElementValue("C://JTerminals/ginH.xml", "loosechange");
+//            String loosechange = xr.getElementValue("C://JTerminals/ginH.xml", "loosechange");
+            String loosechange = "";
             String ccode = "*" + cashiercode.toString() + "*";
             Date LoginStamp = new Date(Long.parseLong(logintime));
 
@@ -1186,16 +1192,16 @@ public class LoginMOD extends javax.swing.JPanel {
             String JoggerParkers = readComFiles("J");
             String PromoParkers = readComFiles("O");
             String DeliveryParkers = readComFiles("D");
-            String QCSeniorParkers = readComFiles("Q");
-            String NonQCSeniorParkers = readComFiles("BC");
+            String LocalSeniorParkers = readComFiles("Q");
+            String NonLocalSeniorParkers = readComFiles("BC");
             String BPOMotorParkers = readComFiles("BM");
 
             String RegularAmount = getPtypeAmount("R");
             String MotorcycleAmount = getPtypeAmount("M");
             String LostAmount = getPtypeAmount("L");
             String DeliveryAmount = getPtypeAmount("D");
-            String QCSeniorAmount = getPtypeAmount("Q");
-            String NonQCSeniorAmount = getPtypeAmount("BC");
+            String LocalSeniorAmount = getPtypeAmount("Q");
+            String NonLocalSeniorAmount = getPtypeAmount("BC");
             String BPOMotorAmount = getPtypeAmount("BM");
 
             String FixRetail = readComFiles("R1");
@@ -1250,9 +1256,9 @@ public class LoginMOD extends javax.swing.JPanel {
             //str.append("\"LCEP Parkers       : " + LCEPParkers + "\" CR LF\n");
             //str.append("\"Invalid Card Parker: " + InvalidFlatRateParkers + "\" CR LF\n");
             //str.append("\"Promo Parkers      : " + PromoParkers + "\" CR LF\n");
-            str.append("\"QCSenior Parkers   : " + QCSeniorParkers + "     " + QCSeniorAmount + "\" CR LF\n");
+            str.append("\"LocalSenior Parkers   : " + LocalSeniorParkers + "     " + LocalSeniorAmount + "\" CR LF\n");
             str.append("\"Delivery Parkers   : " + DeliveryParkers + "     " + DeliveryAmount + "\" CR LF\n");
-            str.append("\"BPO Car Parkers    : " + NonQCSeniorParkers + "     " + NonQCSeniorAmount + "\" CR LF\n");
+            str.append("\"BPO Car Parkers    : " + NonLocalSeniorParkers + "     " + NonLocalSeniorAmount + "\" CR LF\n");
             str.append("\"BPO Motor Parkers  : " + BPOMotorParkers + "     " + BPOMotorAmount + "\" CR LF\n");
             str.append("\"" + "\" CR LF\n");
             str.append("\"" + "\" CR LF\n");
@@ -1367,14 +1373,14 @@ public class LoginMOD extends javax.swing.JPanel {
                         + LogoutTimeSave + LogoutDateSave
                         + formatNos(ExtCarServed)
                         + formatNos(ReceiptServedSave)
-                        + formatNos(RegularParkers) + formatNos(MotorcycleParkers) + formatNos(QCSeniorParkers)
+                        + formatNos(RegularParkers) + formatNos(MotorcycleParkers) + formatNos(LocalSeniorParkers)
                         + formatNos(GraceParkers) + formatNos(VIPParkers) + formatNos(LostCardParkers)
                         + formatNos(LCEPParkers) + formatNos(InvalidFlatRateParkers) + formatNos(DeliveryParkers)
-                        + formatNos(NonQCSeniorParkers) + formatNos(BPOMotorParkers)
+                        + formatNos(NonLocalSeniorParkers) + formatNos(BPOMotorParkers)
                         + formatNos(EXTicketServed) + formatNos(ENTicketServed)
                         + formatNos(RegularAmount) + formatNos(MotorcycleAmount)
-                        + formatNos(QCSeniorAmount) + formatNos(LostAmount)
-                        + formatNos(DeliveryAmount) + formatNos(NonQCSeniorAmount) + formatNos(BPOMotorAmount);
+                        + formatNos(LocalSeniorAmount) + formatNos(LostAmount)
+                        + formatNos(DeliveryAmount) + formatNos(NonLocalSeniorAmount) + formatNos(BPOMotorAmount);
 
                 this.UpdateCollect(line);
                 if (currentcoll == false) {
@@ -1615,12 +1621,17 @@ public class LoginMOD extends javax.swing.JPanel {
 //            Iterator itr1 = ptypesByKey.iterator();            
 
             XMLreader xr = new XMLreader();
-            String logintime = xr.getElementValue("C://JTerminals/ginH.xml", "logindate");
-            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
-            String cashiercode = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
-            String cashiername = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
+//            String logintime = xr.getElementValue("C://JTerminals/ginH.xml", "logindate");
+            login_id = dbh.getLogID();
+            //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            String logintime = dbh.getLoginDate();
+            String cashiercode = dbh.getCashierID();
+            String cashiername = dbh.getCashierName();
+//            String cashiercode = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_id");
+//            String cashiername = xr.getElementValue("C://JTerminals/ginH.xml", "cashier_name");
             //cashiername = cashiername.replaceAll(" ", "");
-            String loosechange = xr.getElementValue("C://JTerminals/ginH.xml", "loosechange");
+            //String loosechange = xr.getElementValue("C://JTerminals/ginH.xml", "loosechange");
+            String loosechange = "";
             String ccode = "*" + cashiercode.toString() + "*";
             ccode = "**" + "**";
             Date LoginStamp = new Date(Long.parseLong(logintime));
@@ -2182,7 +2193,8 @@ public class LoginMOD extends javax.swing.JPanel {
         try {
             DataBaseHandler dbh = new DataBaseHandler();
             XMLreader xr = new XMLreader();
-            login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            login_id = dbh.getLogID();
             dbh.updateTimeRecord("logoutStamp", "CURRENT_TIMESTAMP", login_id);
         } catch (Exception ex) {
             log.error(ex.getMessage());

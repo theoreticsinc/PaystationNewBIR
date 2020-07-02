@@ -245,7 +245,7 @@ public class ParkersAPI {
                 dateTimePaid = dbh.getDateTimePaid();
                 dateTimeINStamp = dbh.getTimeINStamp();
                 dateTimePaidStamp = dbh.getDateTimePaidStamp();
-                
+
                 rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "crdtray", data);
             }
         } catch (Exception ex) {
@@ -257,21 +257,21 @@ public class ParkersAPI {
     public boolean writeExitCRD2DB(boolean scanEXTCRD, String card2check, String PlateCheck, String datetimeIN, String datetimePaid, String datetimeNextDue, String trtype, double amountPaid, boolean isLost, boolean forDuplication) {
         boolean written = false;
         try {
-            DataBaseHandler dbh = new DataBaseHandler();            
+            DataBaseHandler dbh = new DataBaseHandler();
             BufferedImage buf1;
             if (scanEXTCRD) {
                 buf1 = dbh.GetImageFromEXTCRDDB(card2check);
             } else {
                 buf1 = dbh.GetImageFromDB(card2check);
             }
-            
+
             BufferedImage buf2;
             if (scanEXTCRD) {
                 buf2 = dbh.Get2ndImageFromEXTCRDDB(card2check);
             } else {
                 buf2 = dbh.Get2ndImageFromDB(card2check);
             }
-            dbh.eraseExitCard(card2check);            
+            dbh.eraseExitCard(card2check);
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
             written = dbh.writeExit(card2check, PlateCheck, datetimeIN, datetimePaid, datetimeNextDue, trtype, amountPaid, buf1, buf2, isLost);
@@ -284,7 +284,7 @@ public class ParkersAPI {
         }
         return written;
     }
-    
+
     public boolean duplicateCRDPLT(String card2check) {
         boolean found = false;
         try {
@@ -320,7 +320,7 @@ public class ParkersAPI {
         }
         return found;
     }
-    
+
     public boolean sendCRDPLT2Server(String card2check) {
         boolean found = false;
         try {
@@ -1106,10 +1106,12 @@ public class ParkersAPI {
                     //if (AmountDue <= 0) {
                     //    lessDiscount = 0;
                     //}
-                    eh.printline("Less " + ptype + " DSC " + discountPercentage + "% : -P" + displayAmount2Decimals(Float.parseFloat(discountFloat)));
+                    String discountLine = "Less " + ptype + " DSC " + discountPercentage + "%";
+                    discountLine = formatSpaces(discountLine);
+                    eh.printline(discountLine + ": -P" + displayAmount2Decimals(Float.parseFloat(discountFloat)));
                     eh.printline("Price Net of Discount      :  P" + displayAmount2Decimals(NetOfDiscount));
                     eh.printline("Add VAT                    :  P" + displayAmount2Decimals(NetOfDiscount * 0.12f));
-                    
+
 //                    vat12 = 0;
                     eh.printline("TOTAL AMOUNT DUE           :  P" + displayAmount2Decimals(AmountDue));
                     eh.printline("=======================================");
@@ -1339,38 +1341,38 @@ public class ParkersAPI {
                 if (duplicateReceiptType == 2) {
                     DuplicateReceiptHeader = "              CUSTOMER COPY";
                     printUSBReceipt(
-                        firstRun,
-                        true,
-                        rs.getString("ExitID"),
-                        rs.getString("EntranceID"),
-                        rs.getString("PlateNumber"),
-                        "",
-                        ParkerType,
-                        sdfOUT.format(dIN),
-                        sdfOUT.format(dOUT),
-                        rs.getLong("HoursParked"),
-                        rs.getLong("MinutesParked"),
-                        rs.getFloat("NetOfDiscount"),
-                        rs.getFloat("Amount"),
-                        rs.getFloat("GrossAmount"),
-                        rs.getFloat("vat12"),
-                        rs.getFloat("vatsale"),
-                        rs.getFloat("vatExemptedSales"),
-                        rs.getString("ReceiptNumber"),
-                        rs.getString("CashierName"),
-                        rs.getString("username"),
-                        rs.getString("SettlementRef"),
-                        rs.getString("SettlementName"),
-                        rs.getString("SettlementAddr"),
-                        rs.getString("SettlementTIN"),
-                        rs.getString("SettlementBusStyle"),
-                        DuplicateReceiptHeader,
-                        isDiscounted,
-                        discountPercentage,
-                        rs.getFloat("tendered"),
-                        rs.getString("changeDue"),
-                        rs.getString("discount"),
-                        true);
+                            firstRun,
+                            true,
+                            rs.getString("ExitID"),
+                            rs.getString("EntranceID"),
+                            rs.getString("PlateNumber"),
+                            "",
+                            ParkerType,
+                            sdfOUT.format(dIN),
+                            sdfOUT.format(dOUT),
+                            rs.getLong("HoursParked"),
+                            rs.getLong("MinutesParked"),
+                            rs.getFloat("NetOfDiscount"),
+                            rs.getFloat("Amount"),
+                            rs.getFloat("GrossAmount"),
+                            rs.getFloat("vat12"),
+                            rs.getFloat("vatsale"),
+                            rs.getFloat("vatExemptedSales"),
+                            rs.getString("ReceiptNumber"),
+                            rs.getString("CashierName"),
+                            rs.getString("username"),
+                            rs.getString("SettlementRef"),
+                            rs.getString("SettlementName"),
+                            rs.getString("SettlementAddr"),
+                            rs.getString("SettlementTIN"),
+                            rs.getString("SettlementBusStyle"),
+                            DuplicateReceiptHeader,
+                            isDiscounted,
+                            discountPercentage,
+                            rs.getFloat("tendered"),
+                            rs.getString("changeDue"),
+                            rs.getString("discount"),
+                            true);
                     DuplicateReceiptHeader = "        ACCOUNTING / STORE COPY";
                 } else {
                     DuplicateReceiptHeader = "           ###  REPRINT  ###";
@@ -1410,7 +1412,7 @@ public class ParkersAPI {
                         true);
             }
 //"           ###  REPRINT  ###",
-                        
+
             dbh.manualClose();
             //dateTimeIN = dbh.getTimeINStamp();
 
@@ -1425,7 +1427,7 @@ public class ParkersAPI {
             dbh.manualOpen();
             ResultSet rs = dbh.getReceipt4Reprint(plate2check, date2check);
             ParkersAPI pa = new ParkersAPI();
-        
+
 //public void printUSBReceipt(String SentinenlID, String Entrypoint, String Plateno, String ParkerType, String TimeIN, String TimeOUT, long HoursParked, long MinutesParked, float AmountDue, String RNos, String CashierName, String settlementRef, boolean OvernightOverride) {
             while (rs.next()) {
                 String ParkerType = rs.getString("ParkerType");
@@ -2224,6 +2226,19 @@ public class ParkersAPI {
         if (null != CRDPLTdata) {
             parkingData = CRDPLTdata.split(",");
         }
+    }
+
+    public String formatSpaces(String newString) {
+        int totalCharacters = 27;
+        int stoploop = totalCharacters - newString.length();
+        int i = 0;
+        if (newString.length() < totalCharacters) {
+            do {
+                newString = newString + " ";
+                i++;
+            } while (i != stoploop);
+        }
+        return newString;
     }
 
 }

@@ -811,6 +811,133 @@ public class DataBaseHandler extends Thread {
         return username;
     }
 
+    public void setCashierLoginID(String logStamp, String logID, String logcode, String logname) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("TRUNCATE carpark.gin");
+            st.execute("INSERT INTO carpark.gin (cashierID, logID, cashierName, loginDate) VALUES ('" + logcode + "', '" + logID + "', '" + logname + "', '" + logStamp + "')");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    public String getCashierID() {
+        String found = "";
+        try {
+
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT * FROM carpark.gin ORDER BY cashierID");
+
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("cashierID");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return found;
+    }
+
+    public void setLogID(String logID) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("INSERT INTO carpark.gin (logID) VALUES ('" + logID + "')");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    public String getLogID() {
+        String found = null;
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT logID FROM carpark.gin ORDER BY cashierID");
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("logID");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+        return found;
+    }
+
+    public void setLoginDate(String logDate) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("INSERT INTO carpark.gin (loginDate) VALUES ('" + logDate + "')");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+    }
+
+    public String getLoginDate() {
+        String found = "";
+        try {
+
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT loginDate FROM carpark.gin ORDER BY cashierID");
+
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("loginDate");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return found;
+    }
+
+    public void setCashierName(String cashierName) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("INSERT INTO carpark.gin (cashierName) VALUES ('" + cashierName + "')");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
+    public String getCashierName() {
+        String found = "";
+        try {
+
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT cashierName FROM carpark.gin ORDER BY cashierID");
+
+            // iterate through the java resultset
+            while (rs.next()) {
+                found = rs.getString("cashierName");
+            }
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+
+        return found;
+    }
+
     public boolean getLoginPassword(String loginCode, String password) {
         boolean found = false;
         try {
@@ -928,7 +1055,7 @@ public class DataBaseHandler extends Thread {
         }
         String data[] = new String[newArraySize];
         try {
-            connection = getServerConnection(true);
+            connection = getLocalConnection(true);
             ResultSet rs = selectDatabyFields("SELECT * FROM ratesparam." + activeRateParameter + " WHERE trtype = '" + trtype + "'");
             // iterate through the java resultset
             while (rs.next()) {
@@ -1676,7 +1803,7 @@ public class DataBaseHandler extends Thread {
                     }
                     x++;
                 }
-                System.out.println("INSERT SQL: " + insertSQL);
+//                System.out.println("INSERT SQL: " + insertSQL);
                 PreparedStatement remotePST = (PreparedStatement) serverConnection.prepareStatement(insertSQL);
                 x = 1;
                 while (x <= columnNumber) {
@@ -1852,7 +1979,7 @@ public class DataBaseHandler extends Thread {
         }
         return false;
     }
-    
+
     public boolean copyColltrainfromLocal(String tableNameLocal, String tableNameServer) {
         try {
             connection = getLocalConnection(true);
@@ -3489,29 +3616,6 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            DataBaseHandler DBH = new DataBaseHandler();
-
-            //DBH.copyCRDPLTfromServer("server_crdplt.main", "crdplt.main");
-            //DBH.copyCRDPLTfromServer("crdplt.main", "server_crdplt.main");    // For Testing ONLY
-            //DBH.copyExitTransfromLocal("carpark.exit_trans", "server_carpark.exit_trans");
-            //DBH.copyColltrainfromLocal("colltrain.main", "server_colltrain.main");
-            //DBH.copyZReadfromLocal("zread.main", "server_zread.main");
-            //DBH.getEntranceCard();
-//            DBH.insertImageToDB();
-            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
-            DBH.ShowImageFromDB();
-
-//            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";
-//            String destinationFile = "C:/avaimage.jpg";
-//
-//            saveImage(imageUrl, destinationFile);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-        }
-    }
-
     ///////////////////////////Server Copy to POS///////////////////////////
     public List<String> getClientsIP(String tablename) throws SQLException {
         List<String> ipaddresses = new ArrayList<>();
@@ -3822,5 +3926,52 @@ public class DataBaseHandler extends Thread {
         st.close();
         connection.close();
     }
+    
+    public void resetColltrainWithParkerTypes() throws SQLException {
+        connection = getLocalConnection(true);
+        ResultSet rs = selectDatabyFields("SELECT lower(ptypename) as Names FROM parkertypes.main");
+        st = (Statement) connection.createStatement();
+        Statement st2 = (Statement) connection.createStatement();
+            
+        String afterlast = "refundAmount";
+        // iterate through the java resultset
+        while (rs.next()) {
+            String firstName = rs.getString("Names");
+            st2.executeUpdate("ALTER TABLE `colltrain`.`main` ADD `"+firstName+"Count` INT NOT NULL DEFAULT '0' AFTER " + afterlast);
+            afterlast = firstName + "Count";
+            st2.executeUpdate("ALTER TABLE `colltrain`.`main` ADD `"+firstName+"Amount` DOUBLE UNSIGNED NOT NULL DEFAULT '0.00' AFTER " + afterlast);
+            afterlast = firstName + "Amount";
+        }
+        
+        //ALTER TABLE `main` ADD `regular` INT NOT NULL DEFAULT '0' AFTER `refundAmount`;
+        //ALTER TABLE `main` ADD `regularA` DOUBLE NOT NULL DEFAULT '0.00' AFTER `regular`;
+        
+        st.close();
+        st2.close();
+        connection.close();
+    }    
 
+    public static void main(String[] args) {
+        try {
+            DataBaseHandler DBH = new DataBaseHandler();
+
+            //DBH.copyCRDPLTfromServer("server_crdplt.main", "crdplt.main");
+            //DBH.copyCRDPLTfromServer("crdplt.main", "server_crdplt.main");    // For Testing ONLY
+            //DBH.copyExitTransfromLocal("carpark.exit_trans", "server_carpark.exit_trans");
+            //DBH.copyColltrainfromLocal("colltrain.main", "server_colltrain.main");
+            //DBH.copyZReadfromLocal("zread.main", "server_zread.main");
+            //DBH.getEntranceCard();
+//            DBH.insertImageToDB();
+//            DBH.insertImageFromURLToDB("192.168.100.220", "admin", "admin888888");
+//            DBH.ShowImageFromDB();
+
+//            String imageUrl = "http://www.avajava.com/images/avajavalogo.jpg";
+//            String destinationFile = "C:/avaimage.jpg";
+//
+//            saveImage(imageUrl, destinationFile);
+              DBH.resetColltrainWithParkerTypes();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+        }
+    }
 }

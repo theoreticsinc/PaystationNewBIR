@@ -128,7 +128,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public boolean VIPOverride = false;        //from read card
     public boolean PrepaidOverride = false;
     public boolean MotorOverride = false;
-    public boolean QCSeniorOverride = false;
+    public boolean LocalSeniorOverride = false;
     public boolean BPOMotorOverride = false;
     public boolean BPOCarOverride = false;
     public boolean HolidayOverride = false;
@@ -291,7 +291,9 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             printerType = xr.getElementValue("C://JTerminals/initH.xml", "printerType");
             SlotsResetEnabled = xr.getElementValue("C://JTerminals/initH.xml", "reset");
             sResetTime = xr.getAttributeValue("C://JTerminals/initH.xml", "reset", "time");
-            loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
+            dbh = new DataBaseHandler();
+            loginID = dbh.getLogID();
+//            loginID = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             TerminalType = xr.getAttributeValue("C://JTerminals/initH.xml", "terminal_id", "type");
             EN_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HNterminal_id");
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
@@ -4148,7 +4150,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 
 private void FB4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FB4MousePressed
     this.resetAllOverrides();
-    QCSeniorFunction();
+    LocalSeniorFunction();
     ExitAPI ea = new ExitAPI(this);
     if (printer.compareToIgnoreCase("enabled") == 0) {
         PrinterEnabled = true;
@@ -4362,7 +4364,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 break;
             case 81:   //q
                 log.info("QC Senior HOT Key:" + evt.getKeyChar());
-                QCSeniorFunction();
+                LocalSeniorFunction();
                 break;
             case 112:   //F1
                 log.info("Settlement HOT Key:" + evt.getKeyChar());
@@ -4755,6 +4757,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         }
         lostEnabled = false;
         LostPanel.setVisible(lostEnabled);
+        SettPanel.setVisible(lostEnabled);
 
         this.repaint();
         this.requestFocus();
@@ -5053,7 +5056,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         int code = evt.getKeyCode();
         switch (code) {
             case 10:
-                if (isEnterPressed == false || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
+                if (isEnterPressed == false && PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
                     PrevPlate = Plateinput.toString();
                     goEnter();
                 }
@@ -5466,7 +5469,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                     scd.saveZRead(logID, EX_SentinelID, lastTransaction, LogUsercode2.getText());
                     this.loginID = logID;
                     this.startEntranceTransacting();
-                    lm.saveLogintoFile(logStamp, logID, LogUsercode2.getText(), logname);                    
+                    lm.saveLogintoDB(logStamp, logID, LogUsercode2.getText(), logname);                    
                 }
 
                 CashierName = lm.getCashierName();
@@ -5776,7 +5779,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 Loginput.delete(0, Loginput.length());
                 
                 this.StartLogInX();
-                lm.saveLogintoFile(logStamp, "", "", "");
+                lm.saveLogintoDB(logStamp, "", "", "");
                 return true;
             } else {//reset codeinputbox
                 LogUsercode1.setText("");
@@ -6062,7 +6065,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         PrepaidOverride = false;
         LCEPOverride = false;
         VIPOverride = false;
-        QCSeniorOverride = false;
+        LocalSeniorOverride = false;
         DeliveryOverride = false;
         MotorOverride = false;
         BPOCarOverride = false;
@@ -6189,11 +6192,11 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         //ParkerInfo3.setText("Schedule [M-T-W-TH-F]");
     }
 
-    private void QCSeniorFunction() {
+    private void LocalSeniorFunction() {
         clearLeftMIDMsgPanel();
         Funcbutton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hybrid/resources/senior_press.png")));
         trtype = "Q";
-        QCSeniorOverride = true;
+        LocalSeniorOverride = true;
         MainFuncPad.setVisible(true);
         clearRightPanel();
         SysMessage1.setText("QC Senior Citizen");
@@ -6251,7 +6254,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             //settRef.setForeground(new Color(255, 255, 255));
             //settRef.setEditable(lostEnabled);
             //SettPanel.setVisible(settlementEnabled);
-            SettPanel.setVisible(true);
+            SettPanel.setVisible(false);
             LostPanel.setVisible(false);
             this.repaint();
             this.requestFocus();
@@ -6883,7 +6886,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                         }
                                         if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
                                             firstscan = true;
-                                        }
+                                        }                                        
                                     }
                                 } else if (s.compareToIgnoreCase(mastercard1) == 0) {
                                     if (CashierName.compareToIgnoreCase("") == 0) {
@@ -6904,7 +6907,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                             }
 
                             if (mifare.terminal.waitForCardAbsent(0)) {
-                                isEnterPressed = false;
+//                                isEnterPressed = false;
                                 if (MasterIN == true) {
                                     resetMasterCard();
                                     MasterIN = false;

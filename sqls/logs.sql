@@ -84,7 +84,7 @@ CREATE TABLE `main` (
 --
 
 INSERT INTO `main` (`pkID`, `logNum`) VALUES
-(1, 'ÿ!\"^‡ŒÀ€¦');
+(1, 'ÿ™Ð’Ñ~“»');
 
 --
 -- Indexes for dumped tables

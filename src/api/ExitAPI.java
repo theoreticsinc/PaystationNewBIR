@@ -148,7 +148,7 @@ public class ExitAPI implements Runnable {
                     //SysMsg[8] = "P30.00";
                     //stn.StartInvalidFlatRate();
                     stn.processRightPanelMsgs(cmp.PrksMsg);
-                    stn.trtype = "R";
+//                    stn.trtype = "R";
                     //PlateInput2.setText("");
                     stn.Plateinput.delete(0, stn.Plateinput.length());
                     stn.PlateInput2.setText("");
