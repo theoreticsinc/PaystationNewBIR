@@ -44,7 +44,7 @@ public class LoginMOD extends javax.swing.JPanel {
     private RawFileHandler rfh = new RawFileHandler();
     private String login_id;
 
-    static Logger log = LogManager.getLogger(LoginMOD.class.getName());  
+    static Logger log = LogManager.getLogger(LoginMOD.class.getName());
 
     public boolean saveLogintoFile(Date logStamp, String logID, String logcode, String logname) throws FileNotFoundException, IOException {
 //        Writer writer = null;
@@ -122,7 +122,7 @@ public class LoginMOD extends javax.swing.JPanel {
         DataBaseHandler dbh = new DataBaseHandler();
         String CID = dbh.getCashierID();
         return CID;
-        
+
     }
 
     public boolean getCashierPassword(String logCode, String password) throws Exception {
@@ -226,7 +226,7 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.printline(Title);
             eh.printline(datePrint);
             eh.startPrinter();
-            eh.Justify((byte) 0);            
+            eh.Justify((byte) 0);
             eh.printline("\n");
             eh.printline(line0);
             eh.printline(line1);
@@ -440,7 +440,7 @@ public class LoginMOD extends javax.swing.JPanel {
             String receiptNos = scd.getReceiptNos();
             String grandTotal = scd.getGRANDTOTAL();
             String grandGrossTotal = scd.getGRANDGROSSTOTAL();
-            
+
             String lastTransaction = dbh.getLastTransaction(Exitpoint);
 
             int i = 1;
@@ -471,11 +471,11 @@ public class LoginMOD extends javax.swing.JPanel {
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
                 String todaysGross = "Gross Sales         : " + todaysGross_dbl;
                 String vatablesale = "VATables Sales      : " + vatablesale_dbl;
-                String vat12       = "VAT Amount (12%)    : " + vat12_dbl;
+                String vat12 = "VAT Amount (12%)    : " + vat12_dbl;
                 String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
-                String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
+                String zeroRatedSales = "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
-                String todaysale   = "NET SALES           : " + todaysale_dbl;
+                String todaysale = "NET SALES           : " + todaysale_dbl;
                 //String voids =       "VOIDS               : " + voids_dbl;
                 beginOR = "Beginning OR       :" + Exitpoint + beginOR;
                 endOR = "Ending OR          :" + Exitpoint + endOR;
@@ -502,7 +502,7 @@ public class LoginMOD extends javax.swing.JPanel {
             accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(grandTotal));
             accumulatedGrossTotal = "Accumulated Gross Total    : " + getAmountDue(Float.parseFloat(grandGrossTotal));
             this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
-            USBEpsonHandler eh = new USBEpsonHandler();  
+            USBEpsonHandler eh = new USBEpsonHandler();
             this.printAccumulatedTotal(eh, accumulatedTotal, Exitpoint);
             this.printAccumulatedTotal(eh, accumulatedGrossTotal, Exitpoint);
             this.closePrintOut(eh, (byte) 0x08, Exitpoint);
@@ -523,7 +523,7 @@ public class LoginMOD extends javax.swing.JPanel {
             //login_id = xr.getElementValue("C://JTerminals/ginH.xml", "log_id");
             String resetCount = xr.getElementValue("C://JTerminals/initH.xml", "resetCount");
             SaveCollData scd = new SaveCollData();
-            
+
             Float totalCollected = dbh.getImptAmount("totalAmount", login_id);
             Double Sale12Vat = (double) (totalCollected / 1.12) * 0.12f;
             //Double Sale12Vat = (double) totalCollected * 0.12;
@@ -563,13 +563,13 @@ public class LoginMOD extends javax.swing.JPanel {
                 terminalnum = "Terminal N0:   " + terminalnum;
 //                datetimeOut = "Date:          " + datetimeOut;
                 datetimeOut = "Date Printed:  " + datetimeOut.substring(0, 16);
-                String todaysGross     = "Gross Sales         : " + todaysGross_dbl;
-                String vatablesale     = "VATable Sales       : " + vatablesale_dbl;
-                String vat12           = "VAT Amount (12%)    : " + vat12_dbl;
+                String todaysGross = "Gross Sales         : " + todaysGross_dbl;
+                String vatablesale = "VATable Sales       : " + vatablesale_dbl;
+                String vat12 = "VAT Amount (12%)    : " + vat12_dbl;
                 String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
-                String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
+                String zeroRatedSales = "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
-                String todaysale       = "NET Sales           : " + todaysale_dbl;
+                String todaysale = "NET Sales           : " + todaysale_dbl;
                 //String voids =       "VOIDS               : " + voids_dbl;
                 beginOR = "Beginning OR       :" + Exitpoint + beginOR;
                 endOR = "Ending OR          :" + Exitpoint + endOR;
@@ -596,7 +596,7 @@ public class LoginMOD extends javax.swing.JPanel {
             accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(grandTotal));
             accumulatedGrossTotal = "Accumulated Gross Total    : " + getAmountDue(Float.parseFloat(grandGrossTotal));
             this.epsonPrintTOTALLogoutReceiptFromDB(Exitpoint);
-            USBEpsonHandler eh = new USBEpsonHandler();  
+            USBEpsonHandler eh = new USBEpsonHandler();
             this.printAccumulatedTotal(eh, accumulatedTotal, Exitpoint);
             this.printAccumulatedTotal(eh, accumulatedGrossTotal, Exitpoint);
             this.closePrintOut(eh, (byte) 0x08, Exitpoint);
@@ -658,11 +658,11 @@ public class LoginMOD extends javax.swing.JPanel {
                 datetimeOut1 = "Date:          " + datetimeOut.substring(0, 16);
                 String todaysGross = "Gross Sales         : " + todaysGross_dbl;
                 String vatablesale = "VATable Sales       : " + vatablesale_dbl;
-                String vat12 =       "VAT Amount (12%)    : " + vat12_dbl;
+                String vat12 = "VAT Amount (12%)    : " + vat12_dbl;
                 String vatExemptedSales = "VAT Exempt Sales    : " + vatExemptedSales_dbl;
-                String zeroRatedSales =   "Zero-Rated Sales    : 0.00";
+                String zeroRatedSales = "Zero-Rated Sales    : 0.00";
                 String discounts = "Discounts           : " + discounts_dbl;
-                String todaysale =   "NET Sales           : " + todaysale_dbl;
+                String todaysale = "NET Sales           : " + todaysale_dbl;
                 //String voids =       "VOIDS               : " + voids_dbl;
                 beginOR = "Beginning OR       :" + Exitpoint + beginOR;
                 endOR = "Ending OR          :" + Exitpoint + endOR;
@@ -691,7 +691,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 String accumulatedTotal = "Accumulated Grand Total    : " + getAmountDue(Float.parseFloat(newGrand));
                 String accumulatedGrossTotal = "Accumulated Gross Total    : " + getAmountDue(Float.parseFloat(newGrossTotal));
                 this.epsonPrintTOTALLogoutReceiptFromDBByDate(Exitpoint, datetimeOut);
-                USBEpsonHandler eh = new USBEpsonHandler();  
+                USBEpsonHandler eh = new USBEpsonHandler();
                 this.printAccumulatedTotal(eh, accumulatedTotal, Exitpoint);
                 this.printAccumulatedTotal(eh, accumulatedGrossTotal, Exitpoint);
                 this.closePrintOut(eh, (byte) 0x08, Exitpoint);
@@ -800,7 +800,7 @@ public class LoginMOD extends javax.swing.JPanel {
             String OvernightAmount = "";
             String ExtendedAmount = "";
             String discountAmount = "";
-            
+
             String carServed = "";
 
             String vatExemptedSalesAmount = "";
@@ -819,7 +819,7 @@ public class LoginMOD extends javax.swing.JPanel {
             String totalCount = "";
             String totalCashAmount = "";
             String totalGrossAmount = "";
-            
+
             String logINID = "";
 
             while (rs.next()) {
@@ -837,7 +837,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 eh.startPrinter();
                 rdataCount = rs.getString("regularCount");
                 rdataAmount = rs.getString("regularAmount");
-                
+
                 carServed = rs.getString("carServed");
 
                 RefundAmount = rs.getString("refundAmount");
@@ -930,7 +930,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 eh.printline("VATable Sales      :  " + getAmountDue(Float.parseFloat(vatsaleAmount)));
                 eh.printline("VAT Amount (12%)   :  " + getAmountDue(Float.parseFloat(vat12Amount)));
                 eh.printline("VAT Exempt Sales   :  " + getAmountDue(Float.parseFloat(vatExemptedSalesAmount)));
-                eh.printline("Zero-Rated Sales   :  0.00"  );
+                eh.printline("Zero-Rated Sales   :  0.00");
                 eh.printline("Discount Count     :  " + discountCount);
                 eh.printline("Discount Amount    :  " + getAmountDue(Float.parseFloat(discountAmount)));
                 eh.printline("");
@@ -954,7 +954,7 @@ public class LoginMOD extends javax.swing.JPanel {
                 String beginGrandGrossTotal = "";
                 String receiptNos = "";
                 String grandTotal = "";
-                String grandGrossTotal = "";                
+                String grandGrossTotal = "";
                 int beginORnum = 0;
                 while (rs1.next()) {
                     beginOR = rs1.getString("beginOR");
@@ -1174,7 +1174,7 @@ public class LoginMOD extends javax.swing.JPanel {
             String logintime = dbh.getLoginDate();
             String cashiercode = dbh.getCashierID();
             String cashiername = dbh.getCashierName();
-            
+
             cashiername = cashiername.replaceAll(" ", "");
 //            String loosechange = xr.getElementValue("C://JTerminals/ginH.xml", "loosechange");
             String loosechange = "";
@@ -1401,15 +1401,15 @@ public class LoginMOD extends javax.swing.JPanel {
         eh.setRed();
         eh.printline(accTotal);
     }
-    
-    public void closePrintOut(USBEpsonHandler eh, byte spacing, String Exitpoint) {                  
+
+    public void closePrintOut(USBEpsonHandler eh, byte spacing, String Exitpoint) {
         eh.startPrinter();
         eh.feedpaperup(spacing);
         eh.fullcut();
         eh.closeReceiptFile(Exitpoint);
         eh.closePrinter();
     }
-    
+
     //06/16/2019
     //CURRENT ZREAD WITH X READING (Today's)
     public void epsonPrintTOTALLogoutReceiptFromDB(String Exitpoint) {
@@ -1729,8 +1729,10 @@ public class LoginMOD extends javax.swing.JPanel {
             String RefundAmount = "";
             String OvernightAmount = "";
             String ExtendedAmount = "";
-            String discountAmount = "";
-            
+            String pwdDiscountAmount = "";
+            String seniorDiscountAmount = "";
+            String localseniorDiscountAmount = "";
+
             String carServed = "";
 
             String vatExemptedSalesAmount = "";
@@ -1741,7 +1743,9 @@ public class LoginMOD extends javax.swing.JPanel {
 
             String ExtendedCount = "";
             String OvernightCount = "";
-            String discountCount = "";
+            String pwdDiscountCount = "";
+            String seniorDiscountCount = "";
+            String localseniorDiscountCount = "";
             String vatExemptedSalesCount = "";
             String vat12Count = "";
             String vatsaleCount = "";
@@ -1753,14 +1757,16 @@ public class LoginMOD extends javax.swing.JPanel {
             while (rs.next()) {
                 rdataCount = rs.getString("regularCount");
                 rdataAmount = rs.getString("regularAmount");
-                
+
                 carServed = rs.getString("carServed");
 
                 RefundAmount = rs.getString("refundAmount");
                 float refundAmt = Float.parseFloat(RefundAmount);
                 OvernightAmount = rs.getString("overnightAmount");
                 ExtendedAmount = rs.getString("extendedAmount");
-                discountAmount = rs.getString("discountAmount");
+                pwdDiscountAmount = rs.getString("pwdDiscountAmount");
+                seniorDiscountAmount = rs.getString("seniorDiscountAmount");
+                localseniorDiscountAmount = rs.getString("localseniorDiscountAmount");
 
                 vatExemptedSalesAmount = rs.getString("vatExemptedSalesAmount");
                 vat12Amount = rs.getString("vat12Amount");
@@ -1776,7 +1782,9 @@ public class LoginMOD extends javax.swing.JPanel {
                 int refundCnt = Integer.parseInt(RefundCount);
                 ExtendedCount = getImptCountFromDB("extendedCount");
                 OvernightCount = getImptCountFromDB("overnightCount");
-                discountCount = rs.getString("discountCount");
+                pwdDiscountCount = rs.getString("pwdDiscountCount");
+                seniorDiscountCount = rs.getString("seniorDiscountCount");
+                localseniorDiscountCount = rs.getString("localseniorDiscountCount");
                 vatExemptedSalesCount = getImptCountFromDB("vatExemptedSalesCount");
                 vat12Count = getImptCountFromDB("vat12Count");
                 vatsaleCount = getImptCountFromDB("vatsaleCount");
@@ -1855,73 +1863,76 @@ public class LoginMOD extends javax.swing.JPanel {
 //            eh.startPrinter();
 //            
 //            eh.startPrinter();
-                eh.printline("");
-                //eh.printline("Extended Count     : " + ExtendedCount);
-                //eh.printline("Extended Amount    : " + ExtendedAmount);
+            eh.printline("");
+            //eh.printline("Extended Count     : " + ExtendedCount);
+            //eh.printline("Extended Amount    : " + ExtendedAmount);
 //            eh.printline("Overnight Count    :  " + OvernightCount);
 //            eh.printline("Overnight Amount   :  " + getAmountDue(Float.parseFloat(OvernightAmount)));
-                eh.printline("VATable Sales      :  " + getAmountDue(Float.parseFloat(vatsaleAmount)));
-                eh.printline("VAT Amount(12%)    :  " + getAmountDue(Float.parseFloat(vat12Amount)));
-                eh.printline("VAT Exempt Sales   :  " + getAmountDue(Float.parseFloat(vatExemptedSalesAmount)));
-                eh.printline("Zero-Rated Sales   :  P0.00");
-                eh.printline("Discount Count     :  " + discountCount);
-                eh.printline("Discount Amount    :  " + getAmountDue(Float.parseFloat(discountAmount)));
-                eh.printline("");
-                //eh.printline("Total Cars Served  :  " + extCarServed);
-                eh.printline("Total GROSS Amount :  " + getAmountDue(Float.parseFloat(totalGrossAmount)));
-                eh.printline("Total Cash Collect :  " + getAmountDue(Float.parseFloat(totalCashAmount)));
-                eh.startPrinter();
+            eh.printline("VATable Sales      :  " + getAmountDue(Float.parseFloat(vatsaleAmount)));
+            eh.printline("VAT Amount(12%)    :  " + getAmountDue(Float.parseFloat(vat12Amount)));
+            eh.printline("VAT Exempt Sales   :  " + getAmountDue(Float.parseFloat(vatExemptedSalesAmount)));
+            eh.printline("Zero-Rated Sales   :  P0.00");
+            eh.printline("PWD DSC Count      :  " + pwdDiscountCount);
+            eh.printline("PWD DSC Amount     :  " + getAmountDue(Float.parseFloat(pwdDiscountAmount)));
+            eh.printline("Senior DSC Count   :  " + seniorDiscountCount);
+            eh.printline("Senior DSC Amount  :  " + getAmountDue(Float.parseFloat(seniorDiscountAmount)));
+            eh.printline("LocalSenior DSC Cnt:  " + pwdDiscountCount);
+            eh.printline("LocalSenior DSC Amt:  " + getAmountDue(Float.parseFloat(pwdDiscountAmount)));
+            eh.printline("");
+            //eh.printline("Total Cars Served  :  " + extCarServed);
+            eh.printline("Total GROSS Amount :  " + getAmountDue(Float.parseFloat(totalGrossAmount)));
+            eh.printline("Total Cash Collect :  " + getAmountDue(Float.parseFloat(totalCashAmount)));
+            eh.startPrinter();
 
-                eh.printline("Total Cars Served  :  " + carServed);
-                eh.printline("Total Collection   :  " + getAmountDue(Float.parseFloat(ReceiptServed)));
-                eh.printline("");
+            eh.printline("Total Cars Served  :  " + carServed);
+            eh.printline("Total Collection   :  " + getAmountDue(Float.parseFloat(ReceiptServed)));
+            eh.printline("");
 //                    eh.startPrinter();
 //                    eh.feedpaperup((byte) 3);
-                //**********************
-                //ResultSet rs1 = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
-                ResultSet rs1 = dbh.getZReadbylogINID(login_id);
-                //dbh.getTodaysTotalCollectionBydateColl();
-                String beginOR = "";
-                String beginTrans = "";
-                String beginGrandTotal = "";
-                String beginGrandGrossTotal = "";
-                String receiptNos = "";
-                String grandTotal = "";
-                String grandGrossTotal = "";
-                int beginORnum = 0;
-                while (rs1.next()) {
-                    beginOR = rs1.getString("beginOR");
-                    beginTrans = rs1.getString("beginTrans");
-                    receiptNos = rs1.getString("endOR");
-                    grandTotal = rs1.getString("newGrand");
-                    beginGrandTotal = rs1.getString("oldGrand");
-                    beginGrandGrossTotal = rs1.getString("oldGrossTotal");
-                    //***********PRINT*******
-                }
-                
-                receiptNos = scd.getGeneratedReceiptNos();
-                grandTotal = scd.getGRANDTOTAL();
-                grandGrossTotal = scd.getGRANDGROSSTOTAL();
-                
-//
-                eh.printline("Beginning OR No.  : " + Exitpoint + beginOR);
-                eh.printline("Ending OR No.     : " + Exitpoint + receiptNos);
-                eh.printline("Beginning Balance : " + getAmountDue(Float.parseFloat(beginGrandTotal)));
-                eh.printline("Ending Balance    : " + getAmountDue(Float.parseFloat(grandTotal)));
-                eh.printline("Begin Gross       : " + getAmountDue(Float.parseFloat(beginGrandGrossTotal)));
-                eh.printline("Ending Gross      : " + getAmountDue(Float.parseFloat(grandGrossTotal)));
+            //**********************
+            //ResultSet rs1 = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
+            ResultSet rs1 = dbh.getZReadbylogINID(login_id);
+            //dbh.getTodaysTotalCollectionBydateColl();
+            String beginOR = "";
+            String beginTrans = "";
+            String beginGrandTotal = "";
+            String beginGrandGrossTotal = "";
+            String receiptNos = "";
+            String grandTotal = "";
+            String grandGrossTotal = "";
+            int beginORnum = 0;
+            while (rs1.next()) {
+                beginOR = rs1.getString("beginOR");
+                beginTrans = rs1.getString("beginTrans");
+                receiptNos = rs1.getString("endOR");
+                grandTotal = rs1.getString("newGrand");
+                beginGrandTotal = rs1.getString("oldGrand");
+                beginGrandGrossTotal = rs1.getString("oldGrossTotal");
+                //***********PRINT*******
+            }
 
-                eh.startPrinter();
-                eh.printline("");
-                eh.printline("Teller Sign :__________________________");
-                eh.feedpaperup((byte) 2);
-                eh.printline("Supervisor  :__________________________");
-                eh.feedpaperup((byte) 3);
-                eh.startPrinter();
-                eh.fullcut();
-                eh.closeReceiptFile(Exitpoint);
-                eh.closePrinter();
-            
+            receiptNos = scd.getGeneratedReceiptNos();
+            grandTotal = scd.getGRANDTOTAL();
+            grandGrossTotal = scd.getGRANDGROSSTOTAL();
+
+//
+            eh.printline("Beginning OR No.  : " + Exitpoint + beginOR);
+            eh.printline("Ending OR No.     : " + Exitpoint + receiptNos);
+            eh.printline("Beginning Balance : " + getAmountDue(Float.parseFloat(beginGrandTotal)));
+            eh.printline("Ending Balance    : " + getAmountDue(Float.parseFloat(grandTotal)));
+            eh.printline("Begin Gross       : " + getAmountDue(Float.parseFloat(beginGrandGrossTotal)));
+            eh.printline("Ending Gross      : " + getAmountDue(Float.parseFloat(grandGrossTotal)));
+
+            eh.startPrinter();
+            eh.printline("");
+            eh.printline("Teller Sign :__________________________");
+            eh.feedpaperup((byte) 2);
+            eh.printline("Supervisor  :__________________________");
+            eh.feedpaperup((byte) 3);
+            eh.startPrinter();
+            eh.fullcut();
+            eh.closeReceiptFile(Exitpoint);
+            eh.closePrinter();
 
             if (currentcoll == false) {
                 updateLogoutDB();

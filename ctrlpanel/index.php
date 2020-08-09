@@ -246,6 +246,22 @@ echo '
                   <a target="perterminal_accountability_rpt" href="rpt_perterminal_accountability.php" 
                   style="font-size:14px;"><img src="dist/img/stayin.png" align="left" width="50" height="50"><br>Cash Accountability Per Terminal</a>
                 </div>
+                <div class="col-md-3">
+                   <a href="rpt_officialbir.php" target="vcount_rpt" 
+                  style="font-size:14px;"><img src="dist/img/ticket.png" align="left" width="50" height="50"><br>BIR Sales Summary Report</a>
+                </div>
+                <div class="col-md-3">
+                   <a href="rpt_final_logs.php" target="alogs_rpt" 
+                  style="font-size:14px;"><img src="dist/img/gg43.jpg" align="left" width="50" height="50"><br>Audit Logs Report</a>
+                </div>  
+              </div>
+
+              <div class="row">
+                <div class="col-md-3">
+                  <a target="rpt_final_senior_exit" href="rpt_final_senior_exit.php" 
+                  style="font-size:14px;"><img src="dist/img/cash.png" align="left" width="50" height="50"><br>Vat Exempted Sales Report</a>
+                </div>
+
               </div>
               ';} else { echo "This section is only accessible by ms. Cathy"; }
               ?>
@@ -279,14 +295,7 @@ echo '
                    <a href="rpt_vehiclecount.php" target="vcount_rpt" 
                   style="font-size:14px;"><img src="dist/img/vehicle.png" align="left" width="50" height="50"><br>Vehicle Slots Available </a>
                 </div>
-                <div class="col-md-3">
-                   <a href="rpt_officialbir.php" target="vcount_rpt" 
-                  style="font-size:14px;"><img src="dist/img/ticket.png" align="left" width="50" height="50"><br>BIR Sales Summary Report</a>
-                </div>
-                <div class="col-md-3">
-                   <a href="rpt_final_logs.php" target="alogs_rpt" 
-                  style="font-size:14px;"><img src="dist/img/gg43.jpg" align="left" width="50" height="50"><br>Audit Logs Report</a>
-                </div>                  
+                                
               </div>
               ';} else { echo "This section is only accessible by ms. Cathy"; }
               ?>

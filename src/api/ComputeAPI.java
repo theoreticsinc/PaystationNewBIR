@@ -2563,24 +2563,24 @@ public class ComputeAPI {
         /////GRACE PERIOD
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 0;
-        computed = ca.Computation("P", true, false);
+        computed = ca.Computation("R", true, false);
         System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
         ca.HoursElapsed = 0;
         ca.MinutesElapsed = 19;
-        computed = ca.Computation("P", true, false);
+        computed = ca.Computation("R", true, false);
         System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
         /////
 
         for (int i = 1; i <= 48; i++) {
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 0;
-            computed = ca.Computation("P", true, false);
+            computed = ca.Computation("R", true, false);
             System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
             ca.HoursElapsed = i;
             ca.MinutesElapsed = 1;
-            computed = ca.Computation("P", true, false);
+            computed = ca.Computation("R", true, false);
             System.out.println("       " + ca.HoursElapsed + "Hours : " + ca.MinutesElapsed + "Min :== * Amount is: " + computed);
 
         }

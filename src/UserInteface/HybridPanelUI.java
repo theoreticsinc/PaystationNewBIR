@@ -73,9 +73,9 @@ import modules.SystemStatus;
 public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusListener {
 
     //public String entryIPCamera = "192.168.100.220";
-    public String entryIPCamera = "192.168.2.64";
+    public String entryIPCamera = "192.168.1.64";
     //public String exitIPCamera = "192.168.100.219";    
-    public String exitIPCamera = "192.168.2.68";
+    public String exitIPCamera = "192.168.1.68";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -5751,7 +5751,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 String lastTransaction = dbh.getLastTransaction(EX_SentinelID);
                 Float grossCollected = dbh.getImptAmount("grossAmount", loginID);
                 Float totalCollected = dbh.getImptAmount("totalAmount", loginID);
-                Float discountCollected = dbh.getImptAmount("discountAmount", loginID);
+                Float discountCollected = dbh.getImptAmount("pwdDiscountAmount", loginID) + dbh.getImptAmount("seniorDiscountAmount", loginID) +dbh.getImptAmount("localseniorDiscountAmount", loginID);
                 Float vatsaleAmount = dbh.getImptAmount("vatsaleAmount", loginID);
                 Float vat12Amount = dbh.getImptAmount("vat12Amount", loginID);
                 Float vatExemptedSalesAmount = dbh.getImptAmount("vatExemptedSalesAmount", loginID);                

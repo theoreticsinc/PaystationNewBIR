@@ -963,12 +963,12 @@ include'config/main_function.php';
           </tr>
 <?php 
                 $query = "SELECT * FROM flatrate
-                WHERE name = 'LocalSenior'";
+                WHERE name = 'QCSenior'";
                 $p = single_inner_join($query);//query for getting the results
 
             ?>
 
-        <tr><input type="hidden" value="LocalSenior" name="name" />
+        <tr><input type="hidden" value="QCSenior" name="name" />
           <td><input type="text" placeholder="15" name="GracePeriod" class="input-style" value=<?php echo $p['GracePeriod'];?> /> mins</td>
           <td> <input type="text" placeholder="" name="HR0" value=<?php echo $p['Hr0'];?> /></td>
           <td> <input type="text" placeholder="" name="HR0+" value=<?php echo $p['Hr0plus'];?> /></td>

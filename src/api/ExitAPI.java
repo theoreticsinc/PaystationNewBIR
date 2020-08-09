@@ -134,7 +134,7 @@ public class ExitAPI implements Runnable {
                     stn.CardInput2.setText("");
                     return false;
                 } else if (process == 5) {
-                    stn.firstscan = true;
+/*                    stn.firstscan = true;
                     //stn.PreviousCard = stn.CardInput2.getText();
                     stn.PreviousCard = stn.Cardinput.toString();
                     stn.processRightPanelMsgs(cmp.PrksMsg);
@@ -151,7 +151,7 @@ public class ExitAPI implements Runnable {
 //                    stn.trtype = "R";
                     //PlateInput2.setText("");
                     stn.Plateinput.delete(0, stn.Plateinput.length());
-                    stn.PlateInput2.setText("");
+                    stn.PlateInput2.setText("");*/
                     return false;
                 } else if (process == 7) {
                     //SysMsg[2] = "Card has wrong PARKER TYPE";
