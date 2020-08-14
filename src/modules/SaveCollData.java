@@ -264,6 +264,7 @@ public class SaveCollData {
     }
     
     public void UpdateReceiptNos() throws IOException {
+        /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
         if (foundfile == true) {
@@ -278,6 +279,9 @@ public class SaveCollData {
             newcurr = "0";
         }
         rfh.putfile("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt", newcurr);
+        */
+        String oldcount = dbh.getNewReceiptNos();
+        dbh.updateCarparkMaster("receiptNos",oldcount);
     }
 
     public void UpdateReceiptAmount(double AmountRCPT) throws IOException {
@@ -322,6 +326,7 @@ public class SaveCollData {
     }
     
     public String getGRANDGROSSTOTAL() throws IOException {
+        /*
         String curr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
         if (foundfile == true) {
@@ -330,9 +335,13 @@ public class SaveCollData {
             curr = "0";
         }
         return curr;
+        */
+        String curr = dbh.getGrossTotal(0);
+        return curr;
     }
     
     public void UpdateGRANDGROSSTOTAL(double AmountRCPT) throws IOException {
+        /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOG.jrt");
         if (foundfile == true) {
@@ -359,10 +368,15 @@ public class SaveCollData {
 //        } catch (InterruptedException ex) {
 //            LogManager.getLogger(SaveCollData.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-
+        */
+        String oldcount = dbh.getGrossTotal(AmountRCPT);
+        dbh.updateCarparkMaster("grossTotal",oldcount);
     }
     
     public String getGRANDTOTAL() throws IOException {
+        /*
+        
+        
         String curr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
         if (foundfile == true) {
@@ -371,9 +385,13 @@ public class SaveCollData {
             curr = "0";
         }
         return curr;
+        */
+        String curr = dbh.getGrandTotal(0);
+        return curr;
     }
 
     public void UpdateGRANDTOTAL(double AmountRCPT) throws IOException {
+        /*
         String newcurr = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/FnF/iXyZp12R/", "XOR.jrt");
         if (foundfile == true) {
@@ -400,7 +418,9 @@ public class SaveCollData {
 //        } catch (InterruptedException ex) {
 //            LogManager.getLogger(SaveCollData.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-
+            */
+        String oldcount = dbh.getGrandTotal(AmountRCPT);
+        dbh.updateCarparkMaster("grandTotal",oldcount);
     }
     
     public String getPtypeAmount(String Ftype) {
@@ -422,7 +442,8 @@ public class SaveCollData {
         return newcurr;
     }
     
-    public String getReceiptNos() throws IOException {
+    public String getCurrentReceiptNos() throws IOException {
+        /*
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
         if (foundfile == true) {
@@ -442,9 +463,13 @@ public class SaveCollData {
             newReceipt = "000000000000";  //twelve digits
         }
         return newReceipt;
+        */
+        String newReceipt = dbh.getCurrentReceiptNos();
+        return newReceipt;
     }
     
-    public String getNextReceiptNos() throws IOException {
+    public String getNewReceiptNos() throws IOException {
+        /*
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
         if (foundfile == true) {
@@ -464,9 +489,13 @@ public class SaveCollData {
             newReceipt = "000000000000";  //twelve digits
         }
         return newReceipt;
+        */
+        String newReceipt = dbh.getNewReceiptNos();
+        return newReceipt;
     }
 
     public String getGeneratedReceiptNos() throws IOException {
+        /*
         String newReceipt = "";
         boolean foundfile = rfh.FindFileFolder("C://JTerminals/de4Dd87d/CfgJ9rl/", "trent.jrt");
         if (foundfile == true) {
@@ -486,6 +515,9 @@ public class SaveCollData {
         } else {
             newReceipt = "000000000000";  //twelve digits
         }
+        return newReceipt;
+        */
+        String newReceipt = dbh.getCurrentReceiptNos();
         return newReceipt;
     }
 
@@ -555,7 +587,7 @@ public class SaveCollData {
 
     public void saveZRead(String logID, String Exitpoint, String lastTransaction, String logcode) {
         try {
-            String receiptNos = getNextReceiptNos();
+            String receiptNos = getCurrentReceiptNos();
             String grandTotal = getGRANDTOTAL();
             String grandGrossTotal = getGRANDGROSSTOTAL();
             //String transaction = dbh.getTransactionNos();

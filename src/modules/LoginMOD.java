@@ -74,6 +74,12 @@ public class LoginMOD extends javax.swing.JPanel {
         return false;
     }
 
+    public boolean eraseLoginDB() {
+        DataBaseHandler dbh = new DataBaseHandler();
+        dbh.truncateCashierLoginID();
+        return false;
+    }
+
     public String getLOGINDATcashiernameFromDB(String loginCode, String password) throws IOException {
 
         DataBaseHandler dbh = new DataBaseHandler();
@@ -437,7 +443,7 @@ public class LoginMOD extends javax.swing.JPanel {
 
             ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
 
-            String receiptNos = scd.getReceiptNos();
+            String receiptNos = scd.getCurrentReceiptNos();
             String grandTotal = scd.getGRANDTOTAL();
             String grandGrossTotal = scd.getGRANDGROSSTOTAL();
 
@@ -531,7 +537,7 @@ public class LoginMOD extends javax.swing.JPanel {
 
             ResultSet rs = dbh.getTodaysZReadbydateColl(totalCollected, Sale12Vat, vatSale);
 
-            String receiptNos = scd.getReceiptNos();
+            String receiptNos = scd.getCurrentReceiptNos();
             String grandTotal = scd.getGRANDTOTAL();
             String grandGrossTotal = scd.getGRANDGROSSTOTAL();
             String lastTransaction = dbh.getLastTransaction(Exitpoint);
@@ -1871,7 +1877,7 @@ public class LoginMOD extends javax.swing.JPanel {
             eh.printline("VATable Sales      :  " + getAmountDue(Float.parseFloat(vatsaleAmount)));
             eh.printline("VAT Amount(12%)    :  " + getAmountDue(Float.parseFloat(vat12Amount)));
             eh.printline("VAT Exempt Sales   :  " + getAmountDue(Float.parseFloat(vatExemptedSalesAmount)));
-            eh.printline("Zero-Rated Sales   :  P0.00");
+            eh.printline("Zero-Rated Sales   :  0.00");
             eh.printline("PWD DSC Count      :  " + pwdDiscountCount);
             eh.printline("PWD DSC Amount     :  " + getAmountDue(Float.parseFloat(pwdDiscountAmount)));
             eh.printline("Senior DSC Count   :  " + seniorDiscountCount);

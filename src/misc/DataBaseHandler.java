@@ -824,6 +824,18 @@ public class DataBaseHandler extends Thread {
         }
     }
 
+    public void truncateCashierLoginID() {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+            st.execute("TRUNCATE carpark.gin");
+            st.close();
+            connection.close();
+        } catch (SQLException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
     public String getCashierID() {
         String found = "";
         try {
@@ -2622,8 +2634,8 @@ public class DataBaseHandler extends Thread {
                 //receiptNos = "000000000001";
                 receiptNos = "000000000000";
             }
-            String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, oldGrossTotal, zCount, tellerCode, logINID) "
-                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, '" + grandGrossTotal + "', NULL, '" + logcode + "', " + logID + ")";
+            String SQL = "INSERT INTO zread.main (terminalnum, datetimeIn, datetimeOut, todaysale, vatablesale, 12vat, beginOR, endOR, beginTrans, endTrans, oldGrand, newGrand, zCount, tellerCode, logINID) "
+                    + "VALUES ('" + Exitpoint + "', CURRENT_TIMESTAMP, NULL, 0, 0, 0, '" + receiptNos + "', 0, '" + lastTransaction + "', 0, '" + grandTotal + "', 0, NULL, '" + logcode + "', " + logID + ")";
             st.execute(SQL);
             st.close();
             connection.close();
@@ -2812,6 +2824,105 @@ public class DataBaseHandler extends Thread {
         } while (i != stoploop);
 
         return newString;
+    }
+    
+    public String getGrandTotal(double AmountRCPT) {
+        String data = AmountRCPT + "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(grandTotal, 'Th30r3t1cs') AS grandTotal FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Double count = rs.getDouble("grandTotal");
+                
+                    count = count + AmountRCPT;
+                    data = count + "";
+                
+            }
+        }
+        catch (Exception ex) {
+            log.error("getGrandTotal Error: " + ex.getMessage());
+        }
+       
+        return data;
+    }
+    
+    public String getGrossTotal(double AmountRCPT) {
+        String data = AmountRCPT + "";
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(grossTotal, 'Th30r3t1cs') AS grossTotal FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Double count = rs.getDouble("grossTotal");                
+                    count = count + AmountRCPT;
+                    data = count + "";
+            }
+        }
+        catch (Exception ex) {
+            log.error("grossTotal Error: " + ex.getMessage());
+        }
+       
+        return data;
+    }
+
+    public String getNewReceiptNos() {
+        String data = formatNos("1");
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Integer count = rs.getInt("receiptNos");
+                if (count == 0) {
+                    data = formatNos("1");
+                } else {
+                    count++;
+                    data = formatNos(count + "");
+                }
+            }
+        }
+        catch (Exception ex) {
+            log.error("getNewReceiptNos Error: " + ex.getMessage());
+        }       
+        return data;
+    }
+
+    public String getCurrentReceiptNos() {
+        String data = formatNos("0");
+        try {
+            connection = getLocalConnection(true);
+            ResultSet rs = selectDatabyFields("SELECT DES_DECRYPT(receiptNos, 'Th30r3t1cs') AS receiptNos FROM carpark.master");
+            // iterate through the java resultset
+            while (rs.next()) {
+                Integer count = rs.getInt("receiptNos");
+                if (count == 0) {
+                    data = formatNos("0");
+                } else {
+                    data = formatNos(count + "");
+                }
+            }
+        }
+        catch (Exception ex) {
+            log.error("getCurrentReceiptNos Error: " + ex.getMessage());
+        }       
+        return data;
+    }
+
+    public boolean updateCarparkMaster(String fieldName, String value) {
+        try {
+            connection = getLocalConnection(true);
+            st = (Statement) connection.createStatement();
+
+            st.execute("UPDATE carpark.master SET " + fieldName + " = DES_ENCRYPT('" + value + "','Th30r3t1cs')");
+
+            st.close();
+            connection.close();
+            return true;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
+        }
     }
 
     class prewait extends Thread {

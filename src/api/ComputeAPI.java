@@ -314,9 +314,11 @@ public class ComputeAPI {
                 if (firstscan == false) {
 
                     try {
-                        dtStamp = sdf.parse(datetimePaid);
+                        if (null != datetimePaid) {
+                            dtStamp = sdf.parse(datetimePaid);
+                        }
                     } catch (Exception ex) {
-                        log.error(ex.getMessage());
+                        log.error("Error in datetimePaid " + ex.getMessage());
                     }
                     HourPaid = dtStamp.getHours();
                     MinPaid = dtStamp.getMinutes();
@@ -1994,10 +1996,9 @@ public class ComputeAPI {
         try {
             SaveCollData scd = new SaveCollData();
             scd.UpdateReceiptNos();
-            scd.UpdateReceiptAmount(AmountRCPT);                  //
             scd.UpdateGRANDTOTAL(AmountRCPT);
             scd.UpdateGRANDGROSSTOTAL(GrossAmount);
-            return scd.getReceiptNos();
+            return scd.getCurrentReceiptNos();
         } catch (Exception ex) {
             log.error(ex.getMessage());
             return "";

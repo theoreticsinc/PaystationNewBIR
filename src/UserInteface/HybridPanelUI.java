@@ -5778,8 +5778,11 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 SysMessage4.setText("-Please Login again-");
                 Loginput.delete(0, Loginput.length());
                 
-                this.StartLogInX();
-                lm.saveLogintoDB(logStamp, "", "", "");
+                this.StartLogInX();                
+                lm.eraseLoginDB();
+                
+                LoginLbl.setText("LOGIN");
+                LoginLbl.setForeground(new java.awt.Color(255, 255, 0));
                 return true;
             } else {//reset codeinputbox
                 LogUsercode1.setText("");
