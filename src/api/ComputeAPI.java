@@ -573,6 +573,8 @@ public class ComputeAPI {
                 AmountDue = NetOfDiscount + (NetOfDiscount * .12);
                 DecimalFormat df2 = new DecimalFormat("#.00");
                 stn.AMOUNTdisplay.setText("P" + String.valueOf(df2.format(AmountDue)));
+            } else {
+                NetOfDiscount = 0;
             }
             DecimalFormat df2 = new DecimalFormat("#.00");
             stn.AMOUNTdisplay.setText("P " + String.valueOf(df2.format(AmountDue)));
@@ -679,6 +681,8 @@ public class ComputeAPI {
             } else {
 //                updateOneTransFiles("discountAmount", vatAdjustment);
             }
+        } else {
+            NetOfDiscount = 0;
         }
         if (roundoff2) {
             vat12 = Math.round(vat12 * 100.0) / 100.0;
