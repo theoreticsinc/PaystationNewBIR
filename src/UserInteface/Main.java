@@ -10,6 +10,7 @@
 package UserInteface;
 
 import UserInteface.HybridPanelUI.*;
+import java.text.SimpleDateFormat;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -32,6 +33,7 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
         log.info("Starting Hybrid");
+        
         HybridPanelUI tpUI = new HybridPanelUI();
         tpUI.dispose();
         tpUI.setUndecorated(true);
@@ -39,6 +41,12 @@ public class Main {
         tpUI.toFront();
         tpUI.StartUI();
         tpUI.requestFocus();
-    }
+        
+        /*
+        String strDateToSet = "02-02-20";   // dd-MM-yy               
+        String strTimeToSet = "10:05:30";   //hh:mm:ss
+        Runtime.getRuntime().exec("cmd /C date " + strDateToSet + "& time " + strTimeToSet);
+        */
+        }
 
 }
