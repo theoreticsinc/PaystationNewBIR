@@ -194,6 +194,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public StringBuffer VIPinput = new StringBuffer("");
     public StringBuffer Prepaidinput = new StringBuffer("");
     private DataBaseHandler dbh = new DataBaseHandler();
+    private ExitAPI ea = new ExitAPI(this);
 
     ReadMIFARE mifare;
 
@@ -4151,7 +4152,7 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
 private void FB4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FB4MousePressed
     this.resetAllOverrides();
     LocalSeniorFunction();
-    ExitAPI ea = new ExitAPI(this);
+    //ExitAPI ea = new ExitAPI(this);
     if (printer.compareToIgnoreCase("enabled") == 0) {
         PrinterEnabled = true;
     } else {
@@ -4171,7 +4172,7 @@ private void FB4MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 private void FB3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FB3MousePressed
     this.resetAllOverrides();
     PrivateCarsFunction();
-    ExitAPI ea = new ExitAPI(this);
+    //ExitAPI ea = new ExitAPI(this);
     if (printer.compareToIgnoreCase("enabled") == 0) {
         PrinterEnabled = true;
     } else {
@@ -4202,7 +4203,7 @@ private void FB1MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 private void FB6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FB6MousePressed
     this.resetAllOverrides();
     MotorcycleFunction();
-    ExitAPI ea = new ExitAPI(this);
+    //ExitAPI ea = new ExitAPI(this);
     if (printer.compareToIgnoreCase("enabled") == 0) {
         PrinterEnabled = true;
     } else {
@@ -4234,7 +4235,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void VIPpress() {
         this.resetAllOverrides();
         VIPFunction();
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -4250,7 +4251,7 @@ private void FB7MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         this.resetAllOverrides();
         currenttype = trtype;
         GenericCarsFunction(trtype, trname, trdesc);
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -4640,7 +4641,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void XFunc4MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc4MousePressed
         this.resetAllOverrides();
         BPOCarFunction();
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -4655,7 +4656,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void XFunc1Pressed() {
         this.resetAllOverrides();
         LostFunction();
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -4670,7 +4671,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void XFunc2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc2MousePressed
         this.resetAllOverrides();
         BPOMotorFunction();
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -4693,7 +4694,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     private void XFunc6MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_XFunc6MousePressed
         this.resetAllOverrides();
         DeliveryFunction();
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -6446,7 +6447,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     }
 
     private void check4Succeeding() {
-        ExitAPI ea = new ExitAPI(this);
+        //ExitAPI ea = new ExitAPI(this);
         if (printer.compareToIgnoreCase("enabled") == 0) {
             PrinterEnabled = true;
         } else {
@@ -6821,7 +6822,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                             if (null != serverDate) {
                                 SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yy");
                                 String strDateToSet = sdf.format(serverDate);   // dd-MM-yy 
-                                SimpleDateFormat stf = new SimpleDateFormat("hh:mm:ss");                
+                                SimpleDateFormat stf = new SimpleDateFormat("HH:mm:ss");                
                                 String strTimeToSet = stf.format(serverDate);   //hh:mm:ss
                                 //String cmd = "java -jar \"C:/JTerminals/ServerDateUpdater.jar\" " + strDateToSet + " " + strTimeToSet;
                                 String cmd = "cmd /C date " + strDateToSet + "& time " + strTimeToSet;
@@ -6900,7 +6901,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                     CardInput2.setText(s);
                                     Cardinput.append(s);
                                     if (ExitSwitch == true) {
-                                        ExitAPI ea = new ExitAPI(ui);
+                                        //ExitAPI ea = new ExitAPI(ui);
                                         if (printer.compareToIgnoreCase("enabled") == 0) {
                                             PrinterEnabled = true;
                                         } else {
@@ -7559,7 +7560,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
             currentmode = "";
         } else if (currentmode.compareToIgnoreCase("CheckLOST") == 0) {
             LostCheckAPI lc = new LostCheckAPI();
-            ExitAPI ea = new ExitAPI(this);
+            //ExitAPI ea = new ExitAPI(this);
             if (lc.StartLOSTcheck(this) == true) {
                 this.processLeftPanelMsgs(ea.SysMsg);
                 clearLeftMIDMsgPanel();
@@ -7602,7 +7603,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
         } else if (currentmode.compareToIgnoreCase("preCheckLCEP") == 0) {
             modal = true;
         } else if (InvalidFlatRate == true) {
-            ExitAPI ea = new ExitAPI(this);
+            //ExitAPI ea = new ExitAPI(this);
             PreviousCard = Cardinput.toString();
             //PreviousCard = CardInput2.getText();
             if (ea.InitiateInvalids() == true) {
@@ -7630,7 +7631,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 this.SysMessage8.setText("again later");
                 return false;
             }
-            ExitAPI ea = new ExitAPI(this);
+            //ExitAPI ea = new ExitAPI(this);
             if (printer.compareToIgnoreCase("enabled") == 0) {
                 PrinterEnabled = true;
             } else {
