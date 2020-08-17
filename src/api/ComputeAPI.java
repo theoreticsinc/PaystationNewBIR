@@ -164,7 +164,7 @@ public class ComputeAPI {
                 } else if (datamode.compareToIgnoreCase("db") == 0) {
                     //if (firstscan) {
                     stn.SavedStamp = NowStamp;
-                    sets = SP.retrieveCRDPLTFromDB(CardCheck, stn.serverIP, true);
+                    sets = SP.retrieveCRDPLTFromDB(stn.PreviousCard, CardCheck, stn.serverIP, true);
                     stn.scanEXTCRD = false;
                     //} else {
                     if (sets == false) {
@@ -185,7 +185,7 @@ public class ComputeAPI {
         //---start of DB checking
         if (sets == false) {
             if (firstscan) {
-                sets = SP.retrieveCRDPLTFromDB(CardCheck, stn.serverIP, true);
+                sets = SP.retrieveCRDPLTFromDB(stn.PreviousCard, CardCheck, stn.serverIP, true);
             } else {
                 sets = SP.retrieveEXTCRDFromDB(CardCheck, stn.serverIP, true);
             }
@@ -859,6 +859,7 @@ public class ComputeAPI {
             SP.addCarSlots("car");
         }
         //SP.UpdateCarSlots(stn.EX_SentinelID);
+        stn.PreviousCard = "";
         stn.trtype = "R";
         ParkerType = "R";
         stn.resetAllOverrides();

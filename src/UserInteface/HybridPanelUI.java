@@ -6460,7 +6460,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 
     private void testShowCameraOnScreen() {
         dbh.insertImageFromURLToDB(entryIPCamera, "admin", "admin888888");
-        BufferedImage buf = dbh.GetImageFromDB("CA034E2D");
+        BufferedImage buf = dbh.GetImageFromDB("PIC","CA034E2D");
         entryCamera.setIcon(new ImageIcon(buf));
     }
 
@@ -6906,9 +6906,10 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                                             PrinterEnabled = true;
                                         } else {
                                             PrinterEnabled = false;
-                                        }
+                                        }                                        
                                         if (ea.InitiateExit(new Date(), firstscan, currenttype, PrinterEnabled) == true) {
                                             firstscan = true;
+                                            PreviousCard = Cardinput.toString();
                                         }                                        
                                     }
                                 } else if (s.compareToIgnoreCase(mastercard1) == 0) {
@@ -7669,7 +7670,7 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
 //            if (PrinterEnabled == true) {
         //if (isEnterPressed == true || PrevPlate.compareToIgnoreCase(Plateinput.toString()) != 0 ) {
             //PrevPlate = Plateinput.toString();
-            if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) != 0 || scanEXTCRD == true) {
+            if (PreviousCard.compareToIgnoreCase(Cardinput.toString()) == 0 || scanEXTCRD == true) {
                 //********This prevents from scanning the card again.
                 PreviousCard = Cardinput.toString();
                 //PreviousCard = CardInput2.getText();  //Uncomment if you want to Recheck the CARD upon exit

@@ -74,24 +74,28 @@ public class ExitAPI implements Runnable {
                     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
                     if (stn.numOfEntryCams.compareToIgnoreCase("2") == 0) {
-                        BufferedImage buf1 = dbh.GetImageFromDB(stn.CardInput2.getText());
+                        BufferedImage buf1 = dbh.GetImageFromDB("PIC", stn.CardInput2.getText());
 
                         if (null != buf1) {
                             Image img = getScaledImage(buf1, screenSize.width / 4 + 100, screenSize.height / 3);
-
+                            stn.entryCamera.setVisible(true);
                             stn.entryCamera.setIcon(new ImageIcon(img));
                             stn.entryCamera.setText("DRIVERS");
+                        } else {
+                            stn.entryCamera.setVisible(false);
                         }
 
-                        BufferedImage buf2 = dbh.Get2ndImageFromDB(stn.CardInput2.getText());
+                        BufferedImage buf2 = dbh.GetImageFromDB("PIC2", stn.CardInput2.getText());
                         if (null != buf2) {
                             Image img2 = getScaledImage(buf2, screenSize.width / 4 + 100, screenSize.height / 3);
-
+                            stn.exitCamera.setVisible(true);
                             stn.exitCamera.setIcon(new ImageIcon(img2));
                             stn.exitCamera.setText("PLATE");
+                        } else {
+                            stn.exitCamera.setVisible(false);
                         }
                     } else {
-                        BufferedImage buf = dbh.GetImageFromDB(stn.CardInput2.getText());
+                        BufferedImage buf = dbh.GetImageFromDB("PIC", stn.CardInput2.getText());
                         if (null != buf) {
                             Image img = getScaledImage(buf, screenSize.width / 4 + 100, screenSize.height / 3);
 

@@ -213,13 +213,20 @@ public class ParkersAPI {
     /*
         Must also save data from Database to temporary file on file
      */
-    public boolean retrieveCRDPLTFromDB(String card2check, String ip, boolean iscard) {
-        boolean found = false;
+    public boolean retrieveCRDPLTFromDB(String prevCard, String card2check, String ip, boolean iscard) {
+        boolean found = false, copied = false;
         try {
             DataBaseHandler dbh = new DataBaseHandler();
-            found = dbh.findEntranceCard(card2check);
+            if (prevCard.compareTo(card2check) == 0) {
+                found = true;
+            } else {
+                found = dbh.findEntranceCard(card2check);
+                dbh.truncateLocalCard();
+                copied = dbh.copyEntranceCard("crdplt", "main", "crdplt", "main", card2check);                
+            }            
             //dateTimeIN = dbh.getTimeINStamp();
-            if (found) {
+            if (copied || found) {
+                dbh.findLocalEntryCard(card2check); 
                 String data = dbh.getEntCard(card2check);
                 CRDPLTdata = data;
                 dateTimeIN = dbh.getTimeIN();
@@ -229,7 +236,7 @@ public class ParkersAPI {
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
-        return found;
+        return copied || found;
     }
 
     public boolean retrieveEXTCRDFromDB(String card2check, String ip, boolean iscard) {
@@ -262,14 +269,14 @@ public class ParkersAPI {
             if (scanEXTCRD) {
                 buf1 = dbh.GetImageFromEXTCRDDB(card2check);
             } else {
-                buf1 = dbh.GetImageFromDB(card2check);
+                buf1 = dbh.GetImageFromDB("PIC", card2check);
             }
 
             BufferedImage buf2;
             if (scanEXTCRD) {
                 buf2 = dbh.Get2ndImageFromEXTCRDDB(card2check);
             } else {
-                buf2 = dbh.Get2ndImageFromDB(card2check);
+                buf2 = dbh.GetImageFromDB("PIC2", card2check);
             }
             dbh.eraseExitCard(card2check);
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -302,7 +309,7 @@ public class ParkersAPI {
         try {
             DataBaseHandler dbh = new DataBaseHandler();
             found = dbh.eraseEntryCard(card2check);
-
+            dbh.truncateLocalCard();
         } catch (Exception ex) {
             log.error(ex.getMessage());
         }
