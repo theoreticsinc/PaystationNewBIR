@@ -76,6 +76,10 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
     public String entryIPCamera = "192.168.1.64";
     //public String exitIPCamera = "192.168.100.219";    
     public String exitIPCamera = "192.168.1.68";
+    public String cameraSetup = "single";
+    public String cameraAdmin = "admin";
+    public String cameraPassword = "test";
+    public String cameraProtocols = "";
     public boolean isEnterPressed = false;
     char[] characterSet = {'A', 'B', 'C', 'D', 'E', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
     public boolean debugMode = false;
@@ -298,13 +302,19 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
             TerminalType = xr.getAttributeValue("C://JTerminals/initH.xml", "terminal_id", "type");
             EN_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HNterminal_id");
             EX_SentinelID = xr.getElementValue("C://JTerminals/initH.xml", "HXterminal_id");
+            entryIPCamera = xr.getElementValue("C://JTerminals/net.xml", "entryCam1");
+            exitIPCamera = xr.getElementValue("C://JTerminals/net.xml", "exitCam1");
+            cameraSetup = xr.getElementValue("C://JTerminals/net.xml", "cameraSetup");
+            cameraAdmin = xr.getElementValue("C://JTerminals/net.xml", "cameraAdmin");
+            cameraPassword = xr.getElementValue("C://JTerminals/net.xml", "cameraPassword");
+            cameraProtocols = xr.getElementValue("C://JTerminals/net.xml", "cameraProtocols");
             exitType = xr.getElementValue("C://JTerminals/initH.xml", "exitType");
             ParkingArea = xr.getElementValue("C://JTerminals/initH.xml", "area_id");
             SlotsID = xr.getElementValue("C://JTerminals/initH.xml", "slots_id");
             serverIP = xr.getElementValue("C://JTerminals/initH.xml", "server_ip");
             slotsmode = xr.getElementValue("C://JTerminals/initH.xml", "slotsmode");
             payuponentry = xr.getElementValue("C://JTerminals/initH.xml", "payuponentry");
-            numOfEntryCams = xr.getElementValue("C://JTerminals/initH.xml", "numOfEntryCams");
+            numOfEntryCams = xr.getElementValue("C://JTerminals/net.xml", "numOfEntryCams");
             String scompute = xr.getElementValue("C://JTerminals/initH.xml", "slotscompute");
             EncryptionTool et = new EncryptionTool();
             rootpasswd = et.decrypt(xr.getElementValue("C://JTerminals/commandX.xml", "pwd"), "itheoretics");
@@ -486,9 +496,11 @@ public class HybridPanelUI extends javax.swing.JFrame implements WindowFocusList
         SlotsComputer sc = new SlotsComputer(slotscompute);
         ThrSlotsClock = new Thread(sc);
         ThrSlotsClock.start();
-        ShowExitCamera sec = new ShowExitCamera();
-        ThrShowExitCamera = new Thread(sec);
-        ThrShowExitCamera.start();
+        if (cameraSetup.compareToIgnoreCase("singleExit") == 0) {
+            ShowExitCamera sec = new ShowExitCamera();
+            ThrShowExitCamera = new Thread(sec);
+            ThrShowExitCamera.start();
+        }        
         //OnlineQuickUpdater qc = new OnlineQuickUpdater();
         //ThrQuickUpdaterClock = new Thread(qc);
         //ThrQuickUpdaterClock.start();
@@ -6490,8 +6502,8 @@ private void ENTERManualEnter(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
                 try {
 
                     //dbh.insertImageFromURLToDB();
-                    //BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "user1234");
-                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "123456");
+                    BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, cameraAdmin, cameraPassword, cameraProtocols);
+                    //BufferedImage buf = dbh.getImageFromCamera(exitIPCamera, "admin", "123456");
                     if (null != buf) {
                         //entryCamera.setIcon(new ImageIcon(buf));       
                         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

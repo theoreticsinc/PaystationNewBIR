@@ -90,6 +90,7 @@ public class DataBaseHandler extends Thread {
     private Statement st;
     public boolean mainorder;
     private boolean timeoutnow = false;
+    private String serverMode;
     private String dateTimeIN;
     private String dateTimeINStamp;
     private String dateTimePaid;
@@ -102,6 +103,8 @@ public class DataBaseHandler extends Thread {
     public DataBaseHandler() {
         try {
             XMLreader xr = new XMLreader();
+            serverMode = xr.getElementValue("C://JTerminals/net.xml", "servermode") + "";
+            
             MainServer_URL = "jdbc:mysql://" + xr.getElementValue("C://JTerminals/net.xml", "main1") + "";
             SubServer_URL = "jdbc:mysql://" + xr.getElementValue("C://JTerminals/net.xml", "sub1") + "";
 //            MainServer_URL = "jdbc:mysql://192.168.100.240";
@@ -297,7 +300,7 @@ public class DataBaseHandler extends Thread {
         }
     }
 
-    public BufferedImage getImageFromCamera(String ipAdd, String username, String password) {
+    public BufferedImage getImageFromCamera(String ipAdd, String username, String password, String protocols) {
         Connection connection = null;
         BufferedImage buff = null;
         URLConnection uc1 = null;
@@ -321,16 +324,18 @@ public class DataBaseHandler extends Thread {
             String loginPassword = username + ":" + password;
             String encoded = new sun.misc.BASE64Encoder().encode(loginPassword.getBytes());
 
+            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+protocols);
+            
             //URL url = new URL("http://www.avajava.com/images/avajavalogo.jpg");
             //OLD HIKVISION IP Cameras
             //URL url = new URL("http://admin:user1234@192.168.1.64/Streaming/channels/1/picture");
             //HIKVISION DVR
             //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvifsnapshot/media_service/snapshot?channel=1&subtype=0");
             //HIKVISION IP Cameras
-//            URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
+            //URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif-http/snapshot?Profile_1");
             //GWSecurity IP Cameras
 //          URL url = new URL("http://"+username+":"+password+"@"+ipAdd+"/onvif/device_service");
-            URL url = new URL("http://" + username + ":" + password + "@" + ipAdd + "/cgi-bin/snapshot.cgi?stream=0");
+//            URL url = new URL("http://" + username + ":" + password + "@" + ipAdd + "/cgi-bin/snapshot.cgi?stream=0");
 
             //HttpURLConnection yc = (HttpURLConnection) url.openConnection();
             //yc.setRequestProperty("Authorization", "Basic " + encoded);
@@ -1026,6 +1031,8 @@ public class DataBaseHandler extends Thread {
     }
     
     public void truncateLocalCard() throws SQLException {
+        if (serverMode.compareToIgnoreCase("standalone") == 0) 
+            return;
         connection = getLocalConnection(true);
         st = (Statement) connection.createStatement();
         st.execute("TRUNCATE crdplt.main");
@@ -1035,6 +1042,9 @@ public class DataBaseHandler extends Thread {
     
     public boolean copyEntranceCard(String srcdb, String srctbl, String destdb, String desttbl, String card2check) throws SQLException {
         boolean copied = false;
+        if (serverMode.compareToIgnoreCase("standalone") == 0) {
+            return true;
+        }
         connection = getServerConnection(true);
         String insertSQL = "";
         String lTime = "2018-1-1 00:00:00";        

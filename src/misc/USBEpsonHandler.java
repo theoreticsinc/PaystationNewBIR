@@ -49,12 +49,14 @@ public class USBEpsonHandler {
     public boolean PrinterEnabled;
     
     private String printerName;
+    private String printerName2;
     
     USBPrinterService printerService = new USBPrinterService();
 
     public USBEpsonHandler() {
         try {
         printerName = xr.getElementValue("C:\\JTerminals\\initH.xml", "printerName");
+        printerName2 = "NETWORK EPSON TM-T82 ReceiptSA4";
         //uline(false);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -597,7 +599,7 @@ public class USBEpsonHandler {
     }
     
     public void startPrinter() {
-        printerService.startPrinter(printerName);
+        printerService.startPrinter(printerName);        
     }
 
     

@@ -220,9 +220,11 @@ public class ParkersAPI {
             if (prevCard.compareTo(card2check) == 0) {
                 found = true;
             } else {
-                found = dbh.findEntranceCard(card2check);
-                dbh.truncateLocalCard();
-                copied = dbh.copyEntranceCard("crdplt", "main", "crdplt", "main", card2check);                
+                found = dbh.findEntranceCard(card2check);                
+                if (found) {
+                    dbh.truncateLocalCard();
+                    copied = dbh.copyEntranceCard("crdplt", "main", "crdplt", "main", card2check);   
+                }
             }            
             //dateTimeIN = dbh.getTimeINStamp();
             if (copied || found) {

@@ -32,7 +32,7 @@ public class ParkerDataHandler {
 
     static Logger log = LogManager.getLogger(ParkerDataHandler.class.getName());
 
-    String EntryID = "Entry Zone 2";
+    //String EntryID = "Entry Zone 2";
     Statement stmt = null;
     PreparedStatement statement = null;
     Connection conn = null;
